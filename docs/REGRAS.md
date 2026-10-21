@@ -1,6 +1,6 @@
 # Regras de negócio
 
-Tudo que está aqui está implementado em `lib/analise/regras.ts` (parâmetros) e `lib/analise/analise.ts` (cálculos e plano de ação), e coberto por `tests/analise.test.ts`.
+Tudo que está aqui está implementado em `lib/analise/regras.ts` (parâmetros) e `lib/analise/analise.ts` (cálculos e plano de ação), e coberto por `tests/analise.test.ts`, `tests/analise-cenarios.test.ts` e `tests/formato.test.ts`.
 
 ## Entradas
 
@@ -17,7 +17,7 @@ Tudo que está aqui está implementado em `lib/analise/regras.ts` (parâmetros) 
 | Modalidade de envio | Full, Correios/agência, Flex | não |
 | Momento da conta | Início (conta nova) ou Em crescimento | não |
 
-Os números aceitam o formato brasileiro: `1.200`, `6,5`, `R$ 50,00`.
+Os números aceitam o formato brasileiro: `1.200`, `6,5`, `R$ 50,00`. Texto inválido ou valor negativo conta como campo vazio (nenhum campo admite número negativo).
 
 ## Cálculos
 

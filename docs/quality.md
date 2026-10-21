@@ -5,14 +5,14 @@
 | Comando | O que prova |
 |---|---|
 | `npm run lint` | ESLint 9 com presets oficiais do Next (`core-web-vitals` + `typescript`) e a regra local `quality/max-lines` (350) |
-| `npm run lint:typed` | Gate assíncrono type-aware: `no-floating-promises` (error) e `no-misused-promises` (warn, linha de base 11) |
+| `npm run lint:typed` | Gate assíncrono type-aware: `no-floating-promises` (error) e `no-misused-promises` (warn, linha de base 8) |
 | `npm run typecheck` | `tsc --noEmit` com TypeScript strict |
 | `npm run lint:rules` | Self-check das regras locais (`eslint-rules/`) com RuleTester: três linhas `ok` |
-| `npm test` | Vitest: 12 testes das regras de negócio |
+| `npm test` | Vitest: 178 testes (regras de negócio, acesso, rotas, proxy, links de e-mail, ações do admin, PDF e segurança do banco em Postgres em memória) |
 | `npm run build` | Build de produção do Next |
 | `npm run check` | Todos acima, menos o lint tipado, em sequência. Não publica nada |
 
-Rode `npm test` ao mexer em `lib/analise/`; `npm run check` antes de considerar uma entrega pronta.
+Rode `npm test` ao mexer em `lib/`, `proxy.ts`, rotas, ações do admin ou `supabase/schema.sql`; `npm run check` antes de considerar uma entrega pronta.
 
 ## Regras base
 
@@ -31,16 +31,24 @@ Medido em 21/10/2026, em Linux com Node 22: lint padrão 5,4 s; lint tipado 9,2 
 | Regra | Severidade | Violações | Plano |
 |---|---|---|---|
 | `@typescript-eslint/no-floating-promises` | error | 0 | manter |
-| `@typescript-eslint/no-misused-promises` | warn | 11 | handlers `async` passados direto em `onSubmit`/`onClick` (FormConta, cadastro, login, recuperar-senha, redefinir-senha, Analisador ×4, BotaoSair). Corrigir envolvendo em `() => void fn()` ou tratando o retorno; voltar para `error` quando zerar |
+| `@typescript-eslint/no-misused-promises` | warn | 8 | handlers `async` passados direto em `onSubmit`/`onClick` (FormConta, redefinir-senha, Analisador, BotaoSair). Corrigir envolvendo em `() => void fn()` ou tratando o retorno; voltar para `error` quando zerar |
 
 O lint tipado fica fora do `npm run check` até zerar os avisos, para não misturar adoção com o gate existente.
 
 ## Estratégia de testes
 
-- **Regras de negócio** (`lib/analise/`): testes unitários em `tests/analise.test.ts`. As regras foram comparadas com o protótipo original em 2.000 cenários aleatórios quando o app foi criado.
-- **Segurança do banco**: as políticas RLS de `supabase/schema.sql` foram testadas em 20/10/2026 num Postgres 16 com simulação do Supabase (papéis, `auth.uid()`): isolamento entre clientes, bloqueio de autopromoção, bloqueio com acesso vencido, anon sem acesso, admin sem conseguir remover o próprio admin. Esse teste não está automatizado no repositório; repita ao mudar o schema.
-- **Interface**: conferida manualmente com Supabase simulado. Não há suíte E2E.
-- **Ainda não testado com Supabase real**: e-mails de confirmação, convite e recuperação.
+| Arquivo | O que cobre |
+|---|---|
+| `tests/analise.test.ts`, `tests/analise-cenarios.test.ts` | Regras de negócio: métricas, faixas de impressões por clique, impressões por dia, nota, veredito, gargalo, plano de ação (prioridade, Full/Flex/Correios, conta nova, margem, aprendizado) e os seis indicadores. As regras foram comparadas com o protótipo original em 2.000 cenários aleatórios quando o app foi criado |
+| `tests/formato.test.ts` | Leitura dos números no padrão brasileiro (milhar, vírgula, R$, %, ×) e formatação. Valor negativo ou inválido vira campo vazio |
+| `tests/utilitarios.test.ts` | `temAcesso`/`diasRestantes`, rotas do modal, datas do admin (fim do dia em Brasília), variáveis de ambiente e tema |
+| `tests/rotas-servidor.test.ts` | `proxy.ts` (o que visitante e logado podem abrir, arquivos estáticos fora) e `auth/callback` (confirmação, convite, recuperação, PKCE, link vencido, bloqueio de redirecionamento para outro site) |
+| `tests/admin-actions.test.ts` | Ações do painel: só admin, sem chave de serviço, validação, criar com senha ou convite, limites de dias/nome/anotação, tradução de erros, excluir |
+| `tests/pdf.test.ts` | PDF válido, várias páginas numeradas, passos marcados, nome do arquivo |
+| `tests/banco.test.ts` | Roda o `supabase/schema.sql` de verdade num Postgres em memória (PGlite, sem Docker) com papéis e `auth.uid()` simulados: idempotência, perfil criado no cadastro com 7 dias, RLS de perfis e análises (isolamento, campos que o cliente não altera, admin só lê), acesso vencido/bloqueado, limites de tamanho, limite de 2.000 análises, funções do admin, visitante sem acesso, exclusão em cascata, e `tem_acesso()` igual a `temAcesso()` em 30 combinações |
+
+- **Ponta a ponta (21/10/2026)**: 45 fluxos num build de produção, no Chromium, contra um Supabase simulado com estado: apresentação, tema, modal (abrir, trocar telas, fechar no X/Esc, clique fora não fecha), páginas protegidas, termos e privacidade, link vencido, senha errada, cadastro com aceites, e-mail repetido, conta não confirmada, recuperar senha, tela "Tudo certo!" (~3 s), nova análise, marcar passos, salvar, reabrir, editar, copiar, PDF, histórico, descartar, excluir, 404 em análise alheia, menu, tema, minha conta (nome e senha), assinatura, sair, nova senha, teste vencido, conta bloqueada, painel admin (números, busca, filtro, +30 dias, bloquear, editar sem mudar a data, próprio papel travado, criar com senha, e-mail repetido, convite, análises do cliente só leitura, excluir) e celular sem rolagem lateral. O roteiro e o simulador ficam fora do repositório (exigem Playwright); repita antes de mudanças grandes de interface.
+- **Ainda não testado com Supabase real**: entrega dos e-mails de confirmação, convite e recuperação.
 
 Após mudanças em instruções, skills ou memória do agente, rode um caso curto de verificação (por exemplo, pedir ao Claude Code para listar os comandos canônicos e uma skill relevante) e registre o resultado em `docs/setup.md`.
 

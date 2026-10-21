@@ -3,6 +3,7 @@ import { Ban, CalendarPlus, ChevronDown, CircleAlert, CircleCheck, Pencil, Save,
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
+import { dataParaInput, inputParaFimDoDia } from "@/lib/datas";
 import { temAcesso, type Papel, type StatusConta } from "@/lib/regras-acesso";
 import { criarClienteNavegador } from "@/lib/supabase/client";
 import { criarUsuario, excluirUsuario } from "./actions";
@@ -22,7 +23,6 @@ export interface UsuarioAdmin {
 
 const TZ = { timeZone: "America/Sao_Paulo" } as const;
 const data = (d: string | null) => (d ? new Date(d).toLocaleDateString("pt-BR", TZ) : "–");
-const paraInput = (d: string | null) => (d ? new Date(d).toISOString().slice(0, 10) : "");
 
 function situacao(u: UsuarioAdmin): { t: string; c: "good" | "warn" | "bad" | "none" } {
   if (u.papel === "admin") return { t: "Admin", c: "none" };
@@ -122,7 +122,7 @@ function FragmentoLinha(props: {
   const { u, s, aberto } = props;
   const [papel, setPapel] = useState<Papel>(u.papel);
   const [status, setStatus] = useState<StatusConta>(u.status);
-  const [vence, setVence] = useState(paraInput(u.acesso_ate));
+  const [vence, setVence] = useState(dataParaInput(u.acesso_ate));
   const [obs, setObs] = useState(u.observacao);
   const [confirmar, setConfirmar] = useState(false);
   const eu = u.id === props.meuId;
@@ -158,7 +158,7 @@ function FragmentoLinha(props: {
             </div>
             <div className="acoes" style={{ marginTop: 10 }}>
               <button type="button" className="btn primary mini" disabled={props.pendente}
-                onClick={() => props.salvar({ papel, status, observacao: obs, acesso_ate: vence ? new Date(vence + "T23:59:59-03:00").toISOString() : null })}><Save />Salvar</button>
+                onClick={() => props.salvar({ papel, status, observacao: obs, acesso_ate: inputParaFimDoDia(vence) })}><Save />Salvar</button>
               {!eu && props.podeExcluir && (
                 <button type="button" className={"btn mini" + (confirmar ? " danger" : "")} disabled={props.pendente}
                   onClick={() => (confirmar ? props.excluir() : setConfirmar(true))}><Trash2 />{confirmar ? "Confirmar: excluir conta e análises" : "Excluir conta"}</button>

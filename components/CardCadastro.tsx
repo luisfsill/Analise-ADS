@@ -1,5 +1,6 @@
 "use client";
 import { CircleAlert, CircleCheck, UserPlus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import BotaoFecharModal from "@/components/BotaoFecharModal";
 import { ConteudoCarregando } from "@/components/Carregando";
@@ -10,6 +11,7 @@ import { criarClienteNavegador } from "@/lib/supabase/client";
 
 /** Tela "Criar conta" do modal de acesso, com aceite obrigatório dos Termos e da Política. */
 export default function CardCadastro({ aoFechar, aoTrocar }: { aoFechar: () => void; aoTrocar: (t: TelaAcesso) => void }) {
+  const router = useRouter();
   const id = useId();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -27,7 +29,7 @@ export default function CardCadastro({ aoFechar, aoTrocar }: { aoFechar: () => v
     if (!aceitaTermos || !aceitaPrivacidade) { setErro("Para criar a conta, aceite os Termos de Uso e a Política de Privacidade."); return; }
     setCarregando(true);
     const agora = new Date().toISOString();
-    const { error } = await criarClienteNavegador().auth.signUp({
+    const { data, error } = await criarClienteNavegador().auth.signUp({
       email,
       password: senha,
       options: {
@@ -38,6 +40,8 @@ export default function CardCadastro({ aoFechar, aoTrocar }: { aoFechar: () => v
     });
     setCarregando(false);
     if (error) { setErro(error.message.includes("registered") ? "Este e-mail já tem conta. Faça login." : "Não foi possível criar a conta. Confira os dados e tente de novo."); return; }
+    // Com "Confirm email" desligado no Supabase a conta já nasce logada: entra direto
+    if (data.session) { router.replace("/"); router.refresh(); return; }
     setOk(true);
   }
 

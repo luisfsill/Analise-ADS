@@ -59,7 +59,10 @@ export default function Analisador({ registro, somenteLeitura = false }: { regis
   const [salvando, setSalvando] = useState(false);
   const [aviso, setAviso] = useState(registro ? "Salva em " + new Date(registro.atualizado_em).toLocaleString("pt-BR") : "");
   const [confirmar, setConfirmar] = useState<"nova" | "excluir" | null>(null);
+  // Mensagem passageira (erro, "copiada"…): aparece mesmo com alterações não salvas e some sozinha
+  const [mensagem, setMensagem] = useState("");
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const timerMsg = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const entradas: Entradas = useMemo(() => ({
     dias: num(campos.dias), inv: num(campos.inv), imp: num(campos.imp), cli: num(campos.cli), ven: num(campos.ven),
@@ -70,7 +73,7 @@ export default function Analisador({ registro, somenteLeitura = false }: { regis
   const inds = useMemo(() => indicadores(a), [a]);
 
   const mudou = () => setAlterado(true);
-  const toast = (t: string) => { setAviso(t); clearTimeout(timer.current); };
+  const toast = (t: string) => { setMensagem(t); clearTimeout(timerMsg.current); timerMsg.current = setTimeout(() => setMensagem(""), 5000); };
   const pedirConfirmacao = (q: "nova" | "excluir") => {
     setConfirmar(q); clearTimeout(timer.current); timer.current = setTimeout(() => setConfirmar(null), 4000);
   };
@@ -92,7 +95,8 @@ export default function Analisador({ registro, somenteLeitura = false }: { regis
       return;
     }
     setAlterado(false);
-    toast("Salva às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }));
+    setMensagem("");
+    setAviso("Salva às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }));
     if (!id) { setId(r.data.id); router.replace("/analise/" + r.data.id); }
     router.refresh();
   }
@@ -113,7 +117,7 @@ export default function Analisador({ registro, somenteLeitura = false }: { regis
     if (alterado && confirmar !== "nova") { pedirConfirmacao("nova"); return; }
     setConfirmar(null);
     if (id) router.push("/analise/nova");
-    else { setCampos(VAZIO); setEnvio(""); setFase(""); setCampanha(""); setFeitos({}); setAlterado(false); setAviso(""); window.scrollTo({ top: 0, behavior: "smooth" }); }
+    else { setCampos(VAZIO); setEnvio(""); setFase(""); setCampanha(""); setFeitos({}); setAlterado(false); setAviso(""); setMensagem(""); window.scrollTo({ top: 0, behavior: "smooth" }); }
   }
 
   async function excluir() {
@@ -137,7 +141,7 @@ export default function Analisador({ registro, somenteLeitura = false }: { regis
           <p>Preencha os números do período no Mercado Livre Ads. O diagnóstico e o plano de ação se atualizam na hora.</p>
         </div>
         <div className="btns">
-          {aviso && <span className="salvo" role="status">{!alterado && <Check />}{alterado ? "Alterações não salvas" : aviso}</span>}
+          {mensagem ? <span className="salvo" role="status">{mensagem}</span> : aviso && <span className="salvo" role="status">{!alterado && <Check />}{alterado ? "Alterações não salvas" : aviso}</span>}
           {somenteLeitura && <span className="salvo">Análise de um cliente (somente leitura)</span>}
           {!somenteLeitura && <button type="button" className="btn primary" onClick={salvar} disabled={salvando} aria-busy={salvando}><Save />{salvando ? "Salvando…" : id ? "Salvar alterações" : "Salvar análise"}</button>}
           <button type="button" className="btn" onClick={baixarPdf}><Download />Baixar PDF</button>
