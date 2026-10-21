@@ -1,0 +1,623 @@
+<title>Análise de performance dos anúncios</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Painel: faixa de números no topo → resumo → funil → plano de ação (largo) + indicadores (coluna) */
+:root{
+  --bg:#F2F5F9; --surface:#FFFFFF; --ink:#152036; --muted:#5A6579; --line:#DCE2EB; --soft:#EAEFF6;
+  --accent:#2457C5; --accent-soft:#E3EBFA;
+  --good:#1E8556; --warn:#B26F12; --bad:#C2433A;
+  --display:"Bricolage Grotesque","Manrope",system-ui,sans-serif;
+  --body:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F141D; --surface:#171E2A; --ink:#E7ECF3; --muted:#98A3B5; --line:#283244; --soft:#1E2735;
+    --accent:#7FA2F2; --accent-soft:#1F2C47; --good:#43B884; --warn:#E3A64B; --bad:#EA6C61; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F141D; --surface:#171E2A; --ink:#E7ECF3; --muted:#98A3B5; --line:#283244; --soft:#1E2735;
+  --accent:#7FA2F2; --accent-soft:#1F2C47; --good:#43B884; --warn:#E3A64B; --bad:#EA6C61; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{text-wrap:balance}
+.num{font-family:var(--display);font-variant-numeric:tabular-nums;letter-spacing:-0.01em}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;min-width:0}
+.card-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.card-h h2{margin:0;font-size:1rem;font-weight:800}
+.card-h .aside{font-size:.82rem;color:var(--muted)}
+.eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* Cabeçalho */
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.top h1{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,3.4vw,2.1rem);line-height:1.1;letter-spacing:-0.02em}
+.top p{margin:4px 0 0;color:var(--muted);max-width:60ch}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:700;font-size:.9rem;border-radius:10px;padding:9px 14px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn:focus-visible,.f input:focus-visible,summary:focus-visible,.step input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Números */
+.inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.f label{font-size:.78rem;font-weight:800;color:var(--muted)}
+.box{display:flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:0 10px}
+.box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.box span{color:var(--muted);font-weight:700;font-size:.85rem}
+.f input,.f select{flex:1;min-width:0;width:100%;border:0;background:transparent;color:var(--ink);font:inherit;font-weight:700;font-size:1rem;padding:9px 0;font-variant-numeric:tabular-nums;outline:none}
+.f select{font-size:.92rem;cursor:pointer}
+.f select option{background:var(--surface);color:var(--ink)}
+.more{margin-top:12px}
+.camp{max-width:560px;margin-bottom:12px}
+.camp input{font-weight:600}
+.btn:disabled{opacity:.6;cursor:wait}
+.more summary{cursor:pointer;font-weight:700;font-size:.88rem;color:var(--accent);list-style:none;display:inline-flex;gap:6px;align-items:center}
+.more summary::-webkit-details-marker{display:none}
+.more summary::before{content:"+";font-weight:800}
+.more[open] summary::before{content:"–"}
+.more .inputs{margin-top:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.sample{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:8px 12px;border-radius:10px;background:var(--accent-soft);font-size:.86rem;font-weight:600}
+
+/* Resumo */
+.summary{display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.summary{grid-template-columns:repeat(3,minmax(0,1fr))}.summary .verdict{grid-column:1/-1}}
+@media (max-width:520px){.summary{grid-template-columns:1fr 1fr}.summary .stat:last-child{grid-column:1/-1}}
+.verdict{display:flex;gap:18px;align-items:center}
+.score{width:88px;height:88px;flex:none}
+.verdict .msg{font-weight:700;font-size:1.05rem;line-height:1.35;margin:0}
+.pill{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:.8rem;font-weight:800;border-radius:999px;padding:4px 10px}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.stat .v{font-size:1.45rem;font-weight:800;margin-top:4px;line-height:1.15}
+.stat .s{font-size:.8rem;color:var(--muted);margin-top:2px}
+
+/* Status */
+.good{--c:var(--good)} .warn{--c:var(--warn)} .bad{--c:var(--bad)} .none{--c:var(--muted)}
+.chip{display:inline-block;font-size:.72rem;font-weight:800;border-radius:999px;padding:2px 9px;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);white-space:nowrap}
+.pill{color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent)}
+
+/* Funil */
+.funnel{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);align-items:stretch;gap:8px}
+.stage{position:relative;border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--bg);overflow:hidden}
+.stage::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--c)}
+.stage.neck{border-color:var(--c);box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 25%,transparent)}
+.stage .v{font-size:1.7rem;font-weight:800;line-height:1.1;margin-top:6px}
+.stage .s{font-size:.82rem;color:var(--muted);margin-top:4px}
+.stage .neck-tag{position:absolute;top:12px;right:12px}
+.link{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:96px;text-align:center}
+.link .arrow{font-size:1.2rem;color:var(--muted);line-height:1}
+.link .r{font-size:1.05rem;font-weight:800;color:var(--c)}
+.link .rl{font-size:.72rem;color:var(--muted);font-weight:700;max-width:12ch;line-height:1.25}
+@media (max-width:720px){
+  .funnel{grid-template-columns:1fr}
+  .link{flex-direction:row;min-width:0;padding:2px 0}
+  .link .arrow{transform:rotate(90deg)}
+  .link .rl{max-width:none}
+}
+.verdict-line{margin:14px 0 0;font-size:.92rem;color:var(--muted)}
+.verdict-line b{color:var(--ink)}
+
+/* Plano + indicadores */
+.main{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:1fr}}
+.actions{display:flex;flex-direction:column;gap:10px}
+.action{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden}
+.action>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:4px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px 12px 0}
+.action>summary::-webkit-details-marker{display:none}
+.action>summary .stripe{align-self:stretch;background:var(--c);border-radius:0 3px 3px 0}
+.action>summary h3{margin:2px 0 0;font-size:.98rem;line-height:1.3}
+.action>summary .meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.progress{font-size:.75rem;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+.caret{font-size:.8rem;color:var(--muted);transition:transform .15s}
+.action[open] .caret{transform:rotate(180deg)}
+.action .body{padding:0 16px 14px 20px}
+.action .why{margin:0 0 10px;color:var(--muted);max-width:70ch}
+.action h4{margin:12px 0 6px;font-size:.85rem;font-weight:800}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.step label{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;align-items:start;cursor:pointer;padding:6px 8px;border-radius:8px}
+.step label:hover{background:var(--soft)}
+.step input{width:16px;height:16px;margin:3px 0 0;accent-color:var(--accent)}
+.step input:checked + span{color:var(--muted);text-decoration:line-through}
+.empty{color:var(--muted);margin:0}
+
+.ind{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+@media (max-width:1000px){.ind{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:520px){.ind{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.gcard{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:14px 10px;min-width:0}
+.gcard .k{font-size:.84rem;font-weight:800;line-height:1.25;min-height:2.5em;display:flex;align-items:center}
+.ringbox{position:relative;width:100%;max-width:112px;aspect-ratio:1;margin:2px 0 4px}
+.ringbox svg{width:100%;height:100%;display:block}
+.ringbox .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ringbox .v{font-size:1.25rem;font-weight:800;line-height:1.05}
+.ringbox .p{font-size:.64rem;font-weight:800;color:var(--muted);margin-top:2px}
+.gcard .s{font-size:.76rem;color:var(--muted);line-height:1.35}
+.gcard .s b{color:var(--ink)}
+/* Referências */
+.refs summary{cursor:pointer;font-weight:800;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.refs summary::-webkit-details-marker{display:none}
+.refgrid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;margin-top:14px}
+@media (max-width:820px){.refgrid{grid-template-columns:1fr}}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{text-align:left;font-size:.75rem;color:var(--muted);font-weight:800;padding:7px 8px;border-bottom:1px solid var(--line)}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+tr.hit td{background:var(--accent-soft);font-weight:700}
+.note{color:var(--muted);font-size:.8rem;margin:0}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:10px;font-weight:700;opacity:0;transition:opacity .15s;pointer-events:none;z-index:20}
+@media (prefers-reduced-motion:reduce){.toast,.caret{transition:none}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Análise de performance dos anúncios</h1>
+      <p>Preencha os números do período no Mercado Livre Ads. O diagnóstico e o plano de ação se atualizam na hora.</p>
+    </div>
+    <div class="btns">
+      <button type="button" class="btn primary" id="pdf">Baixar relatório PDF</button>
+      <button type="button" class="btn" id="copy">Copiar análise</button>
+      <button type="button" class="btn" id="clear">Nova análise</button>
+    </div>
+  </header>
+
+  <section class="card" aria-labelledby="hNums">
+    <div class="card-h"><h2 id="hNums">Seus números</h2><span class="aside">Totais do período, exceto o investimento, que é a média por dia</span></div>
+    <form id="form" autocomplete="off" onsubmit="return false">
+      <div class="f camp"><label for="camp">Campanha ou produto analisado</label><div class="box"><input id="camp" maxlength="80" placeholder="Ex.: Tênis de corrida, campanha de outubro"></div></div>
+      <div class="inputs">
+        <div class="f"><label for="dias">Dias analisados</label><div class="box"><input id="dias" inputmode="numeric" placeholder="30"><span>dias</span></div></div>
+        <div class="f"><label for="inv">Investimento por dia</label><div class="box"><span>R$</span><input id="inv" inputmode="decimal" placeholder="50,00"></div></div>
+        <div class="f"><label for="imp">Impressões</label><div class="box"><input id="imp" inputmode="numeric" placeholder="40.000"></div></div>
+        <div class="f"><label for="cli">Cliques</label><div class="box"><input id="cli" inputmode="numeric" placeholder="400"></div></div>
+        <div class="f"><label for="ven">Vendas</label><div class="box"><input id="ven" inputmode="numeric" placeholder="40"></div></div>
+        <div class="f"><label for="roas">ROAS</label><div class="box"><input id="roas" inputmode="decimal" placeholder="10"><span>×</span></div></div>
+        <div class="f"><label for="tacos">TACOS</label><div class="box"><input id="tacos" inputmode="decimal" placeholder="5"><span>%</span></div></div>
+      </div>
+      <details class="more" id="more">
+        <summary>Mais detalhes (opcional): margem, envio e momento da conta</summary>
+        <div class="inputs">
+          <div class="f"><label for="margem">Margem de lucro</label><div class="box"><input id="margem" inputmode="decimal" placeholder="20"><span>%</span></div></div>
+          <div class="f"><label for="envio">Modalidade de envio</label><div class="box"><select id="envio"><option value="">Não informado</option><option value="full">Full</option><option value="correios">Correios / agência</option><option value="flex">Flex</option></select></div></div>
+          <div class="f"><label for="fase">Momento da conta</label><div class="box"><select id="fase"><option value="">Não informado</option><option value="inicio">Início (conta nova)</option><option value="cresc">Em crescimento</option></select></div></div>
+        </div>
+      </details>
+      <div class="sample" id="sample" hidden><span>Estes são números de exemplo. Digite os seus para ver a sua análise.</span><button type="button" class="btn" id="startBlank">Começar do zero</button></div>
+    </form>
+  </section>
+
+  <section class="summary" aria-live="polite">
+    <div class="card verdict">
+      <svg class="score" viewBox="0 0 100 100" role="img" aria-label="Nota da conta">
+        <circle cx="50" cy="50" r="42" fill="none" stroke="var(--soft)" stroke-width="10"/>
+        <circle id="ring" cx="50" cy="50" r="42" fill="none" stroke="var(--muted)" stroke-width="10" stroke-linecap="round" stroke-dasharray="0 264" transform="rotate(-90 50 50)"/>
+        <text id="scoreTxt" x="50" y="58" text-anchor="middle" font-size="26" font-weight="800" fill="var(--ink)" font-family="Bricolage Grotesque, Manrope, system-ui, sans-serif">–</text>
+      </svg>
+      <div>
+        <div class="eyebrow">Nota de 0 a 100</div>
+        <p class="msg" id="verdict">Preencha seus números para ver a análise.</p>
+        <span class="pill none" id="neckPill" hidden></span>
+      </div>
+    </div>
+    <div class="card stat"><div class="eyebrow">Investido no período</div><div class="v num" id="sInv">–</div><div class="s" id="sInvS">Investimento por dia × dias</div></div>
+    <div class="card stat"><div class="eyebrow">Vendas pelos anúncios</div><div class="v num" id="sRec">–</div><div class="s" id="sRecS">Investido × ROAS</div></div>
+    <div class="card stat"><div class="eyebrow">Custo por venda</div><div class="v num" id="sCpv">–</div><div class="s" id="sCpvS">Investido ÷ vendas</div></div>
+  </section>
+
+  <section class="card" aria-labelledby="hInd">
+    <div class="card-h"><h2 id="hInd">Indicadores</h2><span class="aside">O anel enche conforme você chega na meta. Cheio = meta batida</span></div>
+    <div class="ind" id="ind"></div>
+  </section>
+
+  <section class="card" aria-labelledby="hFun">
+    <div class="card-h"><h2 id="hFun">Funil do anúncio</h2><span class="aside">Onde o comprador está ficando pelo caminho</span></div>
+    <div class="funnel" id="funnel"></div>
+    <p class="verdict-line" id="neckLine"></p>
+  </section>
+
+  <section class="card" aria-labelledby="hPlan">
+      <div class="card-h"><h2 id="hPlan">Plano de ação</h2><span class="aside" id="planAside">Marque os passos conforme for fazendo</span></div>
+      <div class="actions" id="actions"></div>
+  </section>
+
+  <details class="card refs" id="refs">
+    <summary><span>Tabelas de referência</span><span class="caret" aria-hidden="true">▾</span></summary>
+    <div class="refgrid">
+      <div class="tablewrap">
+        <table><thead><tr><th>Impressões por clique</th><th>CTR</th><th>Classificação</th><th>Ação</th></tr></thead><tbody id="refBody"></tbody></table>
+      </div>
+      <div class="tablewrap">
+        <table><thead><tr><th>Indicador</th><th>Bom</th><th>Atenção</th><th>Crítico</th></tr></thead>
+        <tbody>
+          <tr><td>Cliques por venda</td><td>até 10</td><td>10 a 20</td><td>acima de 20</td></tr>
+          <tr><td>ROAS</td><td>10× ou mais</td><td>5× a 10×</td><td>abaixo de 5×</td></tr>
+          <tr><td>TACOS</td><td>até 5%</td><td>5% a 10%</td><td>acima de 10%</td></tr>
+          <tr><td>Impressões por dia</td><td>1.000 ou mais</td><td>300 a 1.000</td><td>abaixo de 300</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </details>
+
+  <p class="note">Referência de ADS: R$ 50,00 por dia com ROAS 10×. Com a margem preenchida, a régua do ROAS passa a usar o mínimo da sua margem. As faixas são referências gerais para o Mercado Livre e podem variar por categoria. Os números e os passos marcados ficam salvos só neste navegador. Para guardar uma análise, baixe o relatório em PDF antes de clicar em Nova análise.</p>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  const KEY='analise-performance-v1';
+  const HAD_SAVED=(function(){try{return !!localStorage.getItem(KEY);}catch(e){return false;}})();
+  const ids=['dias','inv','imp','cli','ven','roas','tacos','margem'];
+  const sels=['envio','fase','camp'], all=ids.concat(sels);
+  const els={}; all.forEach(id=>els[id]=document.getElementById(id));
+  try{const s=JSON.parse(localStorage.getItem(KEY)||'{}');all.forEach(id=>{if(s[id]!=null)els[id].value=s[id];});}catch(e){}
+  function save(){try{const s={};all.forEach(id=>s[id]=els[id].value);localStorage.setItem(KEY,JSON.stringify(s));}catch(e){}}
+  const META_ROAS=10, REF_INV=50;
+
+  function num(s){
+    s=String(s||'').replace(/R\$|\s|%|×|x/gi,''); if(!s) return null;
+    if(s.indexOf(',')>-1) s=s.replace(/\./g,'').replace(',','.');
+    else if(/^\d{1,3}(\.\d{3})+$/.test(s)) s=s.replace(/\./g,'');
+    const n=parseFloat(s); return isFinite(n)?n:null;
+  }
+  const brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  const int=v=>Math.round(v).toLocaleString('pt-BR');
+  const dec=(v,d)=>v.toLocaleString('pt-BR',{maximumFractionDigits:d==null?1:d});
+
+  const LABEL={good:'Bom',warn:'Atenção',bad:'Crítico',none:'Sem dado'};
+  const PTS={good:100,warn:55,bad:15};
+
+  const TIERS=[
+    {max:50,faixa:'até 50',ctr:'2% ou mais',cls:'Excelente',acao:'Manter. Considerar aumentar o orçamento.',s:'good'},
+    {max:100,faixa:'51 a 100',ctr:'1% a 2%',cls:'Bom',acao:'Manter e monitorar.',s:'good'},
+    {max:200,faixa:'101 a 200',ctr:'0,5% a 1%',cls:'Aceitável',acao:'Alterar a foto de capa (ambientada, sem fundo branco).',s:'warn'},
+    {max:400,faixa:'201 a 400',ctr:'0,25% a 0,5%',cls:'Fraco',acao:'Alterar a foto de capa e comparar preço e frete com os concorrentes.',s:'bad'},
+    {max:Infinity,faixa:'acima de 400',ctr:'menos de 0,25%',cls:'Crítico',acao:'Alterar a foto de capa; se não melhorar, reestruturar o anúncio.',s:'bad'}
+  ];
+
+  function analyze(){
+    const d={}; ids.forEach(id=>d[id]=num(els[id].value));
+    const dias=d.dias&&d.dias>0?d.dias:null;
+    const invTotal=d.inv!=null&&dias?d.inv*dias:null;
+    const ctr=d.imp&&d.cli!=null?d.cli/d.imp*100:null;
+    const conv=d.cli&&d.ven!=null?d.ven/d.cli*100:null;
+    const ipc=d.imp!=null&&d.cli!=null&&d.imp>0?(d.cli>0?d.imp/d.cli:Infinity):null;
+    const tier=ipc==null?null:TIERS.find(t=>ipc<=t.max);
+    const cpvd=d.cli&&d.ven!=null?(d.ven>0?d.cli/d.ven:Infinity):null;
+    const cpc=invTotal!=null&&d.cli?invTotal/d.cli:null;
+    const cpv=invTotal!=null&&d.ven?invTotal/d.ven:null;
+    const receita=invTotal!=null&&d.roas!=null?invTotal*d.roas:null;
+    const roasMin=d.margem&&d.margem>0?100/d.margem:null;
+
+    const st={};
+    st.ctr=tier?tier.s:'none';
+    st.conv=conv==null?'none':conv>=10?'good':conv>=5?'warn':'bad';
+    if(d.roas==null) st.roas='none';
+    else if(roasMin) st.roas=d.roas>=roasMin*1.4?'good':d.roas>=roasMin?'warn':'bad';
+    else st.roas=d.roas>=META_ROAS?'good':d.roas>=5?'warn':'bad';
+    st.tacos=d.tacos==null?'none':d.tacos<=5?'good':d.tacos<=10?'warn':'bad';
+    st.imp=d.imp==null?'none':(dias&&d.imp/dias<300)?'bad':(dias&&d.imp/dias<1000)?'warn':'good';
+    if(d.inv==null) st.inv='none';
+    else if(st.roas==='bad') st.inv='bad';
+    else if(d.inv<REF_INV) st.inv='warn';
+    else if(st.roas==='good'&&st.tacos!=='bad') st.inv='good';
+    else st.inv='warn';
+    st.ven=d.ven==null?'none':(d.ven===0?'bad':st.conv);
+
+    const keys=['inv','imp','ctr','conv','roas','tacos'];
+    const scored=keys.filter(k=>st[k]!=='none');
+    const score=scored.length>=3?Math.round(scored.reduce((s,k)=>s+PTS[st[k]],0)/scored.length):null;
+
+    const ctx={envio:els.envio.value,fase:els.fase.value};
+    const gargalo=(st.imp==='bad'||st.imp==='warn')?'Impressões: revisar ADS e SEO do anúncio':(st.ctr==='bad'||st.ctr==='warn')?'Cliques: alterar a foto de capa':(st.conv==='bad'||st.conv==='warn')?'Vendas: oferta ou frete':null;
+    return {d,dias,invTotal,ctr,conv,cpc,cpv,receita,roasMin,st,score,ipc,cpvd,tier,ctx,gargalo,filled:scored.length};
+  }
+
+  function plan(a){
+    const {d,st,ctx}=a, out=[];
+    const inicio=ctx.fase==='inicio', full=ctx.envio==='full';
+    const ipd=a.dias&&d.imp!=null?d.imp/a.dias:null;
+
+    if(a.dias&&a.dias<7) out.push({p:2,t:'Aguarde o período de aprendizado da campanha',w:'Com '+int(a.dias)+' dia(s) de dados, a campanha ainda está aprendendo. Decidir antes de 7 dias costuma confundir oscilação com tendência.',s:['Mantenha a campanha rodando por pelo menos 7 dias (o ideal é 14) antes de pausar anúncios ou mudar o ACOS objetivo.','Refaça esta análise com 7, 15 e 30 dias.']});
+
+    if(st.imp==='bad'||st.imp==='warn') out.push({p:st.imp==='bad'?1:2,t:'Impressões baixas: revise o ADS e o SEO do anúncio',w:(ipd!=null?'Com cerca de '+int(ipd)+' impressões por dia, poucos compradores estão vendo o anúncio. ':'')+'O primeiro passo é revisar o ADS e as palavras-chave.',s:[
+      'Revise o ADS com a referência: R$ 50,00 por dia com ROAS objetivo de 10×'+(d.inv!=null&&d.inv<REF_INV?' (hoje o investimento é de '+brl(d.inv)+' por dia, abaixo da referência)':'')+'.',
+      'Revise as palavras-chave no AvantPro (e no JoomPulse) e distribua no título, nas características, na ficha técnica e na descrição, sem repetição excessiva.',
+      'Título com 60 caracteres usando as palavras mais buscadas, validadas no AvantPro (sem gênero, que já vai na ficha).',
+      'Descrição validada no AvantPro: até 500 caracteres, com as palavras-chave de forma natural.',
+      'Confira se o anúncio está ativo, com estoque, incluído na campanha e se o orçamento diário não está acabando antes do fim do dia.',
+      'Coloque o anúncio na Central de Promoções'+(inicio?' e avalie o Programa Decola, indicado para contas novas':'')+'.'
+    ]});
+
+    if(st.ctr==='bad'||st.ctr==='warn'){
+      const s=['Troque a foto de capa por uma foto ambientada. Não use fundo branco: ele não gera destaque na tela de busca.','Capa sem objeções e sem texto, com o produto grande e bem iluminado, no formato 1200 x 1540.','Troque uma coisa por vez (primeiro a capa) e avalie de novo depois de 7 dias, para saber o que funcionou.','Compare preço e frete com os 3 primeiros concorrentes da mesma busca: o comprador vê esses dados antes de clicar.'];
+      if(st.ctr==='bad') s.push('Se o anúncio continuar acima de 400 impressões por clique depois da troca, revise o título e reestruture o anúncio.');
+      out.push({p:st.ctr==='bad'?1:2,t:'Cliques baixos: altere a foto de capa',w:(isFinite(a.ipc)?'Seu anúncio precisa de '+int(a.ipc)+' impressões para gerar 1 clique (CTR de '+dec(a.ctr,2)+'%), classificação '+a.tier.cls+'. ':'O anúncio teve impressões, mas nenhum clique, classificação Crítico. ')+'Quando o anúncio aparece e não recebe clique, a ação é alterar a foto de capa.',s});
+    }
+
+    if(st.conv==='bad'||st.conv==='warn'){
+      const muitos=st.imp==='good'&&st.ctr==='good';
+      const frete=['Se a oferta estiver perfeita, o gargalo é o frete: o produto não está no Full ou o valor e o prazo dos Correios estão altos.'];
+      if(full) frete.push('O anúncio já está no Full: confira se há estoque no centro de distribuição e se o prazo exibido é de entrega rápida.');
+      else frete.push('Compare o valor e o prazo de frete que o comprador vê com os dos concorrentes que estão no Full na mesma busca.');
+      if(inicio) frete.push('Início de conta: trabalhe com preço mais baixo para compensar o frete. É um momento de investir para criar histórico.');
+      else frete.push('Isso acontece mais no início da conta. Se for o seu caso, a estratégia é ter preço mais baixo, porque é um momento de investir.');
+      if(ctx.envio!=='flex') frete.push('Ative o Flex, se atender a sua região, para oferecer entrega mais rápida.');
+      if(!full) frete.push('Trabalhe para liberar o Full: é a solução definitiva para valor e prazo de frete.');
+      out.push({p:st.conv==='bad'?1:2,t:muitos?'Muitas impressões e cliques, poucas vendas: oferta ou frete':'Poucas vendas para os cliques: oferta ou frete',w:'O CVR (taxa de conversão) está em '+dec(a.conv,1)+'%: de cada 100 pessoas que clicaram, só '+dec(a.conv,1)+' compraram'+(a.cpvd&&isFinite(a.cpvd)?' (1 venda a cada '+dec(a.cpvd,1)+' cliques)':'')+'. O ideal é 1 venda a cada 10 cliques. O problema está na oferta ou no frete. Comece pela oferta; se ela estiver perfeita, o gargalo é o frete.',groups:[
+        {h:'1. Oferta',s:['Todas as fotos: mínimo de 7 (ideal 7 a 10) e 2 vídeos clip.','Objeções em todas as fotos, exceto a capa, com uma frase simples por foto.','Promoção ativa na Central de Promoções.','Descrição e informações do produto perfeitas: ficha técnica completa, medidas, materiais, modo de uso e conteúdo da embalagem.','Perguntas respondidas e avaliações negativas tratadas.']},
+        {h:'2. Frete',s:frete}
+      ]});
+    }
+
+    if(st.roas==='bad') out.push({p:1,t:'Ajuste a rentabilidade: o ROAS está abaixo do necessário',w:a.roasMin?'O ROAS de '+dec(d.roas)+'× está abaixo do mínimo de '+dec(a.roasMin)+'× para a sua margem: cada venda pelos anúncios custa mais do que deixa de lucro. A meta é ROAS de 10×.':'O ROAS de '+dec(d.roas)+'× está longe da meta de 10×: os anúncios estão trazendo pouca venda para o que custam.',s:[
+      'Refaça a precificação antes de mexer na verba: o preço precisa cobrir custo, taxas, frete e ADS.',
+      'Defina o ACOS objetivo abaixo da sua margem de contribuição'+(d.margem?' (no seu caso, abaixo de '+dec(d.margem)+'%)':'')+'. ROAS 10× equivale a ACOS de 10%.',
+      'Pause os anúncios que gastaram e não venderam nos últimos 15 dias, sem decidir com base em um ou dois dias ruins.',
+      'Concentre a verba nos produtos com melhor margem, estoque garantido e mais avaliações.'
+    ]});
+
+    if(st.roas==='warn') out.push({p:2,t:'Ajuste fino da rentabilidade',w:'O ROAS de '+dec(d.roas)+'× dá resultado, mas está abaixo da meta de 10×.',s:['Reduza o investimento nos anúncios com ROAS abaixo da média e transfira para os que mais vendem.','Revise a precificação para ganhar margem.','Ajuste o ACOS objetivo em passos pequenos e avalie a cada 7 dias.']});
+
+    if(st.tacos==='bad') out.push({p:1,t:'Diminua a dependência dos anúncios',w:'Com TACOS de '+dec(d.tacos)+'%, os anúncios pesam muito sobre o faturamento total, e as vendas orgânicas não estão acompanhando.',s:['Aumente o ROAS objetivo da campanha para 30×: assim o ADS gasta menos e o TACOS cai.','Se o TACOS não cair, desligue a campanha até o TACOS ficar abaixo de 5%.','Passe os anúncios mais vendidos pelo checklist do anúncio: título de 60 caracteres, 7 a 10 fotos ambientadas, 2 clips, ficha técnica e descrição revisadas no AvantPro.','Enquanto isso, coloque todos os anúncios na Central de Promoções para manter as vendas orgânicas.',full?'Mantenha os produtos principais com estoque no Full.':'Busque a liberação do Full para os produtos principais.']});
+
+    if(st.tacos==='warn') out.push({p:2,t:'Acompanhe o TACOS de perto',w:'Com TACOS de '+dec(d.tacos)+'%, vale garantir que as vendas orgânicas cresçam junto com os anúncios.',s:['Compare o faturamento total com o do mês anterior antes de aumentar o orçamento.','Se o TACOS cair enquanto o faturamento sobe, o ADS está ajudando o orgânico.']});
+
+    if(st.roas==='good'&&st.tacos!=='bad'&&st.imp!=='bad'&&st.ctr!=='bad'&&st.conv!=='bad') out.push({p:3,t:'Escale o que está funcionando',w:'O ROAS de '+dec(d.roas)+'× está'+(d.roas>=META_ROAS?' na meta de 10× ou acima':' saudável para a sua margem')+': os anúncios estão dando lucro.',s:['Aumente o investimento diário em até 20% por semana nos anúncios com melhor ROAS e acompanhe por 7 dias.','Se o ROAS se mantiver, repita o aumento.','Garanta estoque: anúncio sem estoque perde o aprendizado da campanha.','Em datas fortes (Black Friday, Natal), reforce o orçamento com antecedência.']});
+
+    if(a.filled>=3) out.push({p:3,t:'Rotina semanal de ADS',w:out.length?'Para manter os ajustes sob controle.':'Os indicadores estão saudáveis. Mantenha a estratégia e acompanhe.',s:['Revise uma vez por semana, não todo dia: mexer diariamente leva a confundir oscilação com tendência.','Separe as campanhas por objetivo: produtos campeões, lançamentos e estoque parado.','Acompanhe ROAS, TACOS e estoque juntos antes de mudar orçamento.']});
+    return out.sort((x,y)=>x.p-y.p);
+  }
+
+  const $=id=>document.getElementById(id);
+  const mk=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;};
+  const SAMPLE={dias:'30',inv:'50',imp:'60.000',cli:'1.200',ven:'40',roas:'8',tacos:'6'};
+  let sample=false;
+  if(!HAD_SAVED){Object.keys(SAMPLE).forEach(k=>els[k].value=SAMPLE[k]);sample=true;}
+
+  const DONE_KEY='analise-performance-passos';
+  let done={}; try{done=JSON.parse(localStorage.getItem(DONE_KEY)||'{}');}catch(e){}
+  const saveDone=()=>{try{localStorage.setItem(DONE_KEY,JSON.stringify(done));}catch(e){}};
+  const openState={};
+
+  const fmtR=v=>v==null?'–':isFinite(v)?dec(v,1):'sem';
+  const PRIO={1:['bad','Prioridade alta'],2:['warn','Prioridade média'],3:['good','Oportunidade']};
+
+  // Anel de progresso: quanto da meta foi atingido (0 a 1)
+  const NS='http://www.w3.org/2000/svg';
+  const sv=(t,at)=>{const e=document.createElementNS(NS,t);for(const k in at)e.setAttribute(k,at[k]);return e;};
+  const C=2*Math.PI*40;
+  function ring(pct,status){
+    const g=sv('svg',{viewBox:'0 0 100 100','aria-hidden':'true'});
+    g.appendChild(sv('circle',{cx:50,cy:50,r:40,fill:'none',stroke:'var(--soft)','stroke-width':'10'}));
+    if(pct!=null) g.appendChild(sv('circle',{cx:50,cy:50,r:40,fill:'none',stroke:'var(--'+(status==='none'?'muted':status)+')','stroke-width':'10','stroke-linecap':'round','stroke-dasharray':(Math.max(0.02,Math.min(1,pct))*C)+' '+C,transform:'rotate(-90 50 50)'}));
+    return g;
+  }
+  function card(label,val,status,pct,meta){
+    const c=mk('div','gcard'); c.appendChild(mk('div','k',label));
+    const box=mk('div','ringbox'); box.appendChild(ring(pct,status));
+    const ctr=mk('div','c'); ctr.append(mk('div','v num',val),mk('div','p',pct==null?'':pct>=1?'meta batida':Math.round(pct*100)+'% da meta'));
+    box.appendChild(ctr); c.append(box,mk('span','chip '+status,LABEL[status]));
+    const m=mk('div','s'); m.append(mk('b','','Meta: '),meta); c.appendChild(m);
+    return c;
+  }
+  const ratio=(v,goal,lowerBetter)=>v==null?null:lowerBetter?(isFinite(v)?(v<=0?1:goal/v):0):v/goal;
+
+  let last=null;
+  function render(){
+    if(!sample) save();
+    $('sample').hidden=!sample;
+    const a=analyze(); last=a; const {d,st}=a;
+
+    // Resumo
+    const ring=$('ring'),txt=$('scoreTxt'),v=$('verdict'),pill=$('neckPill');
+    if(a.score==null){ring.setAttribute('stroke-dasharray','0 264');txt.textContent='–';v.textContent='Preencha pelo menos três números para ver a nota.';pill.hidden=true;}
+    else{
+      const s=a.score>=75?'good':a.score>=50?'warn':'bad';
+      ring.setAttribute('stroke','var(--'+s+')');ring.setAttribute('stroke-dasharray',(a.score/100*264)+' 264');txt.textContent=a.score;
+      v.textContent=a.score>=75?(a.gargalo?'Boa performance geral, mas resolva o gargalo antes de escalar.':'Seus anúncios estão com boa performance e podem ser escalados.'):a.score>=50?'Seus anúncios dão resultado, mas há pontos segurando o lucro.':'Seus anúncios precisam de ajustes urgentes para parar de perder dinheiro.';
+      pill.hidden=false;
+      if(a.gargalo){const g=a.gargalo.split(':');pill.className='pill '+(st[{Impressões:'imp',Cliques:'ctr',Vendas:'conv'}[g[0]]]||'warn');pill.textContent='Gargalo: '+g[0].toLowerCase();}
+      else{pill.className='pill good';pill.textContent='Funil sem gargalo';}
+    }
+    $('sInv').textContent=a.invTotal!=null?brl(a.invTotal):'–';
+    $('sInvS').textContent=a.invTotal!=null?brl(d.inv)+' por dia × '+int(a.dias)+' dias':'Investimento por dia × dias';
+    $('sRec').textContent=a.receita!=null?brl(a.receita):'–';
+    $('sRecS').textContent=d.roas!=null?'ROAS de '+dec(d.roas)+'×':'Investido × ROAS';
+    $('sCpv').textContent=a.cpv!=null?brl(a.cpv):'–';
+    $('sCpvS').textContent=a.cpc!=null?'Custo por clique: '+brl(a.cpc):'Investido ÷ vendas';
+
+    // Funil
+    const f=$('funnel'); f.textContent='';
+    const neck=a.gargalo?a.gargalo.split(':')[0]:null;
+    const stage=(name,val,sub,s)=>{const c=mk('div','stage '+s+(neck===name?' neck':''));c.append(mk('div','eyebrow',name),mk('div','v num',val==null?'–':int(val)),mk('div','s',sub));if(neck===name){const t=mk('span','chip '+s+' neck-tag','Gargalo');c.appendChild(t);}return c;};
+    const link=(r,label,s)=>{const l=mk('div','link '+s);l.append(mk('div','arrow','→'),mk('div','r num',r),mk('div','rl',label));return l;};
+    const ipd=a.dias&&d.imp!=null?d.imp/a.dias:null;
+    f.append(
+      stage('Impressões',d.imp,ipd!=null?int(ipd)+' por dia':'Total do período',st.imp),
+      link(fmtR(a.ipc),'impressões por clique',st.ctr),
+      stage('Cliques',d.cli,a.ctr!=null?'CTR de '+dec(a.ctr,2)+'%':'Total do período',st.ctr),
+      link(fmtR(a.cpvd),'cliques por venda',st.conv),
+      stage('Vendas',d.ven,a.conv!=null?'Conversão de '+dec(a.conv,1)+'%':'Total do período',st.ven)
+    );
+    const nl=$('neckLine'); nl.textContent='';
+    if(a.gargalo){const b=mk('b','', 'O que fazer: ');nl.append(b,a.gargalo.split(':')[1].trim().replace(/^./,c=>c.toUpperCase())+'. Veja o plano de ação.');}
+    else if(d.imp&&d.cli!=null&&d.ven!=null) nl.textContent='Impressões, cliques e conversão estão saudáveis.';
+    else nl.textContent='Preencha impressões, cliques e vendas para ver o funil completo.';
+
+    // Indicadores
+    const ind=$('ind'); ind.textContent='';
+    const rGoal=a.roasMin?a.roasMin*1.4:META_ROAS;
+    ind.append(
+      card('Investimento por dia',d.inv!=null?brl(d.inv).replace(',00',''):'–',d.inv==null?'none':d.inv>=REF_INV?'good':'warn',ratio(d.inv,REF_INV),'R$ 50 por dia'),
+      card('Impressões por dia',ipd!=null?int(ipd):'–',st.imp,ratio(ipd,1000),'1.000 ou mais'),
+      card('Impressões por clique',a.ipc==null?'–':isFinite(a.ipc)?int(a.ipc):'sem clique',st.ctr,ratio(a.ipc,100,true),'até 100'),
+      card('Cliques por venda',a.cpvd==null?'–':isFinite(a.cpvd)?dec(a.cpvd,1):'sem venda',st.conv,ratio(a.cpvd,10,true),'até 10'),
+      card('ROAS',d.roas!=null?dec(d.roas)+'×':'–',st.roas,ratio(d.roas,rGoal),dec(rGoal)+'×'+(a.roasMin?' (pela margem)':'')),
+      card('TACOS',d.tacos!=null?dec(d.tacos)+'%':'–',st.tacos,ratio(d.tacos,5,true),'até 5%')
+    );
+
+    // Referência
+    const rb=$('refBody'); rb.textContent='';
+    TIERS.forEach(t=>{const tr=mk('tr',a.tier===t?'hit':'');[t.faixa,t.ctr,t.cls,t.acao].forEach(x=>tr.appendChild(mk('td','',x)));rb.appendChild(tr);});
+
+    // Plano
+    const list=$('actions'); list.textContent='';
+    const acts=plan(a); last.acts=acts;
+    $('planAside').textContent=acts.length?acts.length+' ações, da mais urgente para a menos urgente':'Marque os passos conforme for fazendo';
+    if(!acts.length) list.appendChild(mk('p','empty','Preencha pelo menos três números para ver as ações recomendadas.'));
+    acts.forEach((x,i)=>{
+      const [s,label]=PRIO[x.p];
+      const det=mk('details','action '+s); det.open=openState[x.t]!=null?openState[x.t]:i===0;
+      det.addEventListener('toggle',()=>{openState[x.t]=det.open;});
+      const sm=mk('summary'); const head=mk('div'); head.append(mk('span','chip '+s,label),mk('h3','',x.t));
+      const meta=mk('div','meta'); const prog=mk('span','progress'); meta.append(prog,mk('span','caret','▾'));
+      sm.append(mk('span','stripe'),head,meta); det.appendChild(sm);
+      const body=mk('div','body'); body.appendChild(mk('p','why',x.w));
+      const all=[]; const steps=(arr)=>{const ul=mk('ul','steps');arr.forEach(t=>{const k=x.t+'|'+t;all.push(k);const li=mk('li','step');const lb=mk('label');const cb=mk('input');cb.type='checkbox';cb.checked=!!done[k];cb.addEventListener('change',()=>{if(cb.checked)done[k]=1;else delete done[k];saveDone();upd();});lb.append(cb,mk('span','',t));li.appendChild(lb);ul.appendChild(li);});return ul;};
+      if(x.s) body.appendChild(steps(x.s));
+      (x.groups||[]).forEach(g=>{body.append(mk('h4','',g.h),steps(g.s));});
+      const upd=()=>{const n=all.filter(k=>done[k]).length;prog.textContent=n+'/'+all.length+' feitos';};
+      upd(); det.appendChild(body); list.appendChild(det);
+    });
+  }
+
+  ids.forEach(id=>els[id].addEventListener('input',()=>{sample=false;render();}));
+  sels.forEach(id=>els[id].addEventListener('change',()=>{sample=false;render();}));
+  els.camp.addEventListener('input',()=>{if(!sample)save();});
+  $('startBlank').addEventListener('click',()=>{all.forEach(id=>els[id].value='');sample=false;render();els.dias.focus();});
+
+  const clr=$('clear'); let armed=null;
+  clr.addEventListener('click',()=>{
+    if(!armed){clr.textContent='Confirmar: começar nova análise';clr.classList.add('danger');armed=setTimeout(()=>{armed=null;clr.textContent='Nova análise';clr.classList.remove('danger');},4000);return;}
+    clearTimeout(armed);armed=null;clr.textContent='Nova análise';clr.classList.remove('danger');
+    all.forEach(id=>els[id].value='');done={};saveDone();sample=false;render();say('Pronto para analisar outra campanha');els.camp.focus();window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  const toast=$('toast');
+  function say(t){toast.textContent=t;toast.style.opacity=1;setTimeout(()=>toast.style.opacity=0,1800);}
+  $('copy').addEventListener('click',()=>{
+    if(!last||last.score==null){say('Preencha os números primeiro');return;}
+    const d=last.d,L=[];
+    L.push('Análise de performance – Mercado Livre Ads','Nota: '+last.score+'/100');
+    if(last.gargalo) L.push('Gargalo: '+last.gargalo);
+    L.push('','Investimento por dia: '+(d.inv!=null?brl(d.inv):'–'),'Impressões: '+(d.imp!=null?int(d.imp):'–'),'Cliques: '+(d.cli!=null?int(d.cli):'–')+(last.ctr!=null?' (CTR '+dec(last.ctr,2)+'%)':''),'Vendas: '+(d.ven!=null?int(d.ven):'–')+(last.conv!=null?' (conversão '+dec(last.conv,1)+'%)':''),'Impressões por clique: '+(last.ipc==null?'–':isFinite(last.ipc)?int(last.ipc):'sem clique'),'Cliques por venda: '+(last.cpvd==null?'–':isFinite(last.cpvd)?dec(last.cpvd,1):'sem venda'),'ROAS: '+(d.roas!=null?dec(d.roas)+'×':'–'),'TACOS: '+(d.tacos!=null?dec(d.tacos)+'%':'–'),'','Plano de ação:');
+    last.acts.forEach((x,i)=>{L.push('',(i+1)+'. '+x.t+' – '+x.w);(x.s||[]).forEach(s=>L.push('   • '+s));(x.groups||[]).forEach(g=>{L.push('   '+g.h);g.s.forEach(s=>L.push('     • '+s));});});
+    const text=L.join('\n');
+    (navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject()).then(()=>say('Análise copiada')).catch(()=>say('Não foi possível copiar. Tente de novo.'));
+  });
+
+  // ---------- Relatório em PDF ----------
+  const COL={good:[30,133,86],warn:[178,111,18],bad:[194,67,58],none:[90,101,121],ink:[21,32,54],muted:[90,101,121],line:[220,226,235],accent:[36,87,197],soft:[234,239,246]};
+  const clean=t=>String(t).replace(/→/g,'>').replace(/[‘’]/g,"'").replace(/[“”]/g,'"');
+  const hoje=()=>new Date().toLocaleDateString('pt-BR');
+  function buildPdf(a){
+    const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:'mm',format:'a4'});
+    const W=210,M=16,CW=W-2*M; let y=0;
+    const camp=(els.camp.value||'').trim();
+    const color=c=>doc.setTextColor(...COL[c]);
+    const font=(sz,st)=>{doc.setFontSize(sz);doc.setFont('helvetica',st||'normal');};
+    const need=h=>{if(y+h>282){doc.addPage();y=18;}};
+    const para=(t,sz,st,c,x,w,lh)=>{font(sz,st);color(c||'ink');const lines=doc.splitTextToSize(clean(t),w||CW);lines.forEach(l=>{need(lh||sz*0.45);doc.text(l,x||M,y);y+=(lh||sz*0.45);});};
+    const section=t=>{y+=4;need(14);font(11.5,'bold');color('accent');doc.text(clean(t).toUpperCase(),M,y);y+=2;doc.setDrawColor(...COL.line);doc.setLineWidth(0.3);doc.line(M,y,W-M,y);y+=6;};
+
+    // Cabeçalho
+    doc.setFillColor(...COL.ink);doc.rect(0,0,W,30,'F');
+    font(16,'bold');doc.setTextColor(255,255,255);doc.text('Análise de performance dos anúncios',M,13);
+    font(10);doc.setTextColor(205,214,228);doc.text(clean((camp?camp+'  ·  ':'')+'Mercado Livre Ads  ·  '+(a.dias?int(a.dias)+' dias analisados  ·  ':'')+'Gerado em '+hoje()),M,21);
+    y=42;
+
+    // Nota
+    const s=a.score>=75?'good':a.score>=50?'warn':'bad';
+    doc.setDrawColor(...COL[s]);doc.setLineWidth(2.2);doc.circle(M+11,y+3,10,'S');
+    font(15,'bold');color('ink');doc.text(String(a.score),M+11,y+5.2,{align:'center'});
+    font(7,'normal');color('muted');doc.text('de 100',M+11,y+18.5,{align:'center'});
+    const vx=M+28,vw=CW-28; const yy=y; y=y-2;
+    para($('verdict').textContent,11.5,'bold','ink',vx,vw,5.4);
+    if(a.gargalo){y+=1;font(9.5,'bold');color(a.st[{Impressões:'imp',Cliques:'ctr',Vendas:'conv'}[a.gargalo.split(':')[0]]]||'warn');doc.text(clean('Gargalo: '+a.gargalo),vx,y);y+=5;}
+    else{font(9.5,'bold');color('good');doc.text('Funil sem gargalo',vx,y);y+=5;}
+    y=Math.max(y,yy+22);
+
+    // Resumo
+    section('Resumo do período');
+    const d=a.d; const box=[['Investido no período',a.invTotal!=null?brl(a.invTotal):'–'],['Vendas pelos anúncios',a.receita!=null?brl(a.receita):'–'],['Custo por venda',a.cpv!=null?brl(a.cpv):'–'],['Custo por clique',a.cpc!=null?brl(a.cpc):'–']];
+    const bw=(CW-9)/4; need(18);
+    box.forEach((b,i)=>{const x=M+i*(bw+3);doc.setFillColor(...COL.soft);doc.roundedRect(x,y-4,bw,16,2,2,'F');font(7.5,'bold');color('muted');doc.text(clean(b[0]).toUpperCase(),x+3,y+1);font(11.5,'bold');color('ink');doc.text(clean(b[1]),x+3,y+8);});
+    y+=17;
+
+    // Funil
+    section('Funil do anúncio');
+    const ipd=a.dias&&d.imp!=null?d.imp/a.dias:null;
+    const stg=[['Impressões',d.imp,ipd!=null?int(ipd)+' por dia':'',a.st.imp],['Cliques',d.cli,a.ctr!=null?'CTR '+dec(a.ctr,2)+'%':'',a.st.ctr],['Vendas',d.ven,a.conv!=null?'Conversão '+dec(a.conv,1)+'%':'',a.st.ven]];
+    const lk=[[a.ipc,'impressões por clique',a.st.ctr],[a.cpvd,'cliques por venda',a.st.conv]];
+    const sw=44,gap=(CW-3*sw)/2; need(22);
+    stg.forEach((t,i)=>{const x=M+i*(sw+gap);doc.setDrawColor(...COL[t[3]]);doc.setLineWidth(t[0]===(a.gargalo||'').split(':')[0]?0.9:0.3);doc.roundedRect(x,y-4,sw,18,2,2,'S');doc.setFillColor(...COL[t[3]]);doc.rect(x+1,y-4,sw-2,1.2,'F');font(7.5,'bold');color('muted');doc.text(t[0].toUpperCase(),x+3,y+1);font(13,'bold');color('ink');doc.text(t[1]==null?'–':int(t[1]),x+3,y+7.5);font(7.5);color('muted');doc.text(clean(t[2]),x+3,y+12);
+      if(i<2){const l=lk[i];const cx=x+sw+gap/2;font(11,'bold');color(l[2]);doc.text(fmtR(l[0])==='sem'?'–':(isFinite(l[0])?dec(l[0],1):'–'),cx,y+3,{align:'center'});font(6.5,'bold');color('muted');doc.text(l[1],cx,y+7.5,{align:'center',maxWidth:gap-4});}
+    });
+    y+=20;
+
+    // Indicadores
+    section('Indicadores');
+    const rGoal=a.roasMin?a.roasMin*1.4:META_ROAS;
+    const rows=[
+      ['Investimento por dia',d.inv!=null?brl(d.inv):'–','R$ 50,00 por dia',d.inv==null?'none':d.inv>=REF_INV?'good':'warn'],
+      ['Impressões por dia',ipd!=null?int(ipd):'–','1.000 ou mais',a.st.imp],
+      ['Impressões por clique',a.ipc==null?'–':isFinite(a.ipc)?int(a.ipc):'sem clique','até 100',a.st.ctr],
+      ['Cliques por venda',a.cpvd==null?'–':isFinite(a.cpvd)?dec(a.cpvd,1):'sem venda','até 10',a.st.conv],
+      ['ROAS',d.roas!=null?dec(d.roas)+'×':'–',dec(rGoal)+'×'+(a.roasMin?' (pela margem)':''),a.st.roas],
+      ['TACOS',d.tacos!=null?dec(d.tacos)+'%':'–','até 5%',a.st.tacos]
+    ];
+    const cx=[M,M+70,M+110,M+150];
+    font(8,'bold');color('muted');['Indicador','Seu número','Meta','Status'].forEach((h,i)=>doc.text(h,cx[i],y));y+=2;doc.setDrawColor(...COL.line);doc.line(M,y,W-M,y);y+=5;
+    rows.forEach(r=>{need(8);font(9.5);color('ink');doc.text(clean(r[0]),cx[0],y);font(9.5,'bold');doc.text(clean(r[1]),cx[1],y);font(9.5);color('muted');doc.text(clean(r[2]),cx[2],y);
+      doc.setFillColor(...COL[r[3]]);doc.circle(cx[3]+1.4,y-1.2,1.4,'F');font(9.5,'bold');color(r[3]);doc.text(LABEL[r[3]],cx[3]+4.5,y);
+      y+=2.5;doc.setDrawColor(...COL.line);doc.line(M,y,W-M,y);y+=5;});
+
+    // Plano de ação
+    section('Plano de ação');
+    (a.acts||[]).forEach((x,i)=>{
+      const [ps,pl]=PRIO[x.p]; need(20);
+      font(8,'bold');color(ps);doc.text(pl.toUpperCase(),M,y);y+=4.5;
+      para((i+1)+'. '+x.t,11,'bold','ink',M,CW,5);
+      y+=0.5; para(x.w,9,'normal','muted',M,CW,4.3); y+=1.5;
+      const steps=(arr)=>arr.forEach(t=>{const k=x.t+'|'+t;const lines=doc.splitTextToSize(clean(t),CW-8);need(lines.length*4.4+1);
+        doc.setDrawColor(...COL.muted);doc.setLineWidth(0.3);doc.rect(M+1,y-2.9,3,3,'S');
+        if(done[k]){doc.setDrawColor(...COL.good);doc.setLineWidth(0.6);doc.line(M+1.6,y-1.4,M+2.4,y-0.5);doc.line(M+2.4,y-0.5,M+3.6,y-2.4);}
+        font(9.2);color(done[k]?'muted':'ink');lines.forEach((l,j)=>{doc.text(l,M+7,y);y+=4.4;});y+=0.6;});
+      if(x.s) steps(x.s);
+      (x.groups||[]).forEach(g=>{need(8);y+=1;font(9.5,'bold');color('ink');doc.text(clean(g.h),M+1,y);y+=4.8;steps(g.s);});
+      y+=4;
+    });
+
+    // Rodapé
+    const n=doc.getNumberOfPages();
+    for(let p=1;p<=n;p++){doc.setPage(p);font(7.5);color('muted');doc.text(clean('Referência de ADS: R$ 50,00 por dia com ROAS 10×. Faixas gerais para o Mercado Livre, podem variar por categoria.'),M,290);doc.text(p+' / '+n,W-M,290,{align:'right'});}
+    return doc;
+  }
+
+  let dl=null; const dlReady=(window.claude&&window.claude.use?window.claude.use('downloads'):Promise.resolve(null)).then(x=>{dl=x;return x;}).catch(()=>null);
+  const pdfBtn=$('pdf');
+  pdfBtn.addEventListener('click',async()=>{
+    if(!last||last.score==null){say('Preencha os números primeiro');return;}
+    if(!window.jspdf){say('O gerador de PDF não carregou. Recarregue a página.');return;}
+    const api=dl||await dlReady;
+    if(!api){say('Baixar PDF não está disponível nesta visualização.');return;}
+    pdfBtn.disabled=true;pdfBtn.textContent='Gerando PDF…';
+    try{
+      const doc=buildPdf(last); const camp=(els.camp.value||'').trim().replace(/[\\/:*?"<>|]+/g,'').slice(0,60);
+      const dt=new Date().toISOString().slice(0,10);
+      await api.save({filename:'Analise ADS'+(camp?' - '+camp:'')+' - '+dt+'.pdf',data:doc.output('blob')});
+      say('PDF salvo. Para outra campanha, clique em Nova análise.');
+    }catch(e){
+      const c=e&&e.code;
+      say(c==='declined'?'Download cancelado.':c==='rate_limited'?'Já existe um download aguardando confirmação.':'Não foi possível salvar o PDF agora.');
+    }finally{pdfBtn.disabled=false;pdfBtn.textContent='Baixar relatório PDF';}
+  });
+  render();
+})();
+</script>
