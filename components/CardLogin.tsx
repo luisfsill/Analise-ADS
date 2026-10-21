@@ -8,8 +8,8 @@ import LinksNeon from "@/components/LinksNeon";
 import type { TelaAcesso } from "@/lib/rotas";
 import { criarClienteNavegador } from "@/lib/supabase/client";
 
-/** Tempo da tela "Tudo certo!" antes de abrir o painel (a animação termina em ~1,6 s). */
-const PAUSA_SUCESSO_MS = 2800;
+/** Tempo da tela "Tudo certo!" antes de abrir o painel: os textos terminam de aparecer em ~1,65 s, mais meio segundo. */
+const PAUSA_SUCESSO_MS = 2150;
 
 /** Tela "Entrar" do modal de acesso. */
 export default function CardLogin({ erroInicial = "", aoFechar, aoTrocar }: { erroInicial?: string; aoFechar: () => void; aoTrocar: (t: TelaAcesso) => void }) {
