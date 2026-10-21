@@ -23,6 +23,7 @@ export default async function Historico() {
           <h1>Minhas análises</h1>
           <p>Cada análise fica salva com os números, o plano de ação e os passos que você marcou.</p>
         </div>
+        <Link href="/analise/nova" className="btn primary"><Plus />Nova análise</Link>
       </header>
       <section className="card">
         {error && <p className="msg-erro">Não foi possível carregar as análises. Recarregue a página.</p>}

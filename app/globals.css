@@ -274,3 +274,44 @@ code{font-size:.85em;background:var(--soft);padding:1px 6px;border-radius:6px}
   .nav,.toast,.btn{-webkit-backdrop-filter:none;backdrop-filter:none}
   .nav{background:var(--surface)}
 }
+
+/* ---- Barra superior: menus à esquerda, usuário à direita ---- */
+.nav .in{flex-wrap:nowrap}
+.nav .esq{display:flex;align-items:center;gap:20px;min-width:0}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav a.lnk.ativo{color:var(--ink);background:color-mix(in srgb,var(--ink) 7%,transparent);font-weight:590}
+.menu-usuario{position:relative;flex:none}
+.usuario-btn{font:inherit;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:4px 10px 4px 4px;border-radius:999px;border:1px solid var(--line);background:color-mix(in srgb,var(--surface) 70%,transparent);color:var(--ink);cursor:pointer;max-width:240px;touch-action:manipulation;transition:background-color var(--fast) var(--ease),border-color var(--fast) var(--ease),box-shadow var(--fast) var(--ease)}
+.usuario-btn:hover,.usuario-btn.aberto{background:var(--surface);border-color:color-mix(in srgb,var(--ink) 18%,transparent);box-shadow:var(--shadow-sm)}
+.usuario-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.usuario-nome{font-size:.9rem;font-weight:560;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.usuario-btn .seta{color:var(--muted);transition:transform var(--fast) var(--ease)}
+.usuario-btn.aberto .seta{transform:rotate(180deg)}
+.avatar{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:50%;background:linear-gradient(145deg,#2997FF,#0058C7);color:#fff;font-size:.74rem;font-weight:650;letter-spacing:.02em}
+.avatar.grande{width:40px;height:40px;font-size:.9rem}
+@keyframes menu-entrar{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
+.menu-painel{position:absolute;right:0;top:calc(100% + 8px);width:280px;max-width:calc(100vw - 32px);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:var(--shadow-lg);padding:6px;z-index:40;transform-origin:top right;animation:menu-entrar var(--fast) var(--ease-out)}
+.menu-cabeca{display:flex;align-items:center;gap:12px;padding:10px 10px 12px}
+.menu-id{display:flex;flex-direction:column;min-width:0}
+.menu-nome{font-weight:620;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.menu-email{font-size:.8rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.menu-grupo{border-top:1px solid var(--line);padding:6px 0;display:flex;flex-direction:column;gap:2px}
+.menu-grupo:last-child{padding-bottom:0}
+.menu-item{font:inherit;font-size:.92rem;display:flex;align-items:center;gap:10px;width:100%;min-height:40px;padding:8px 10px;border:0;border-radius:var(--r-sm);background:transparent;color:var(--ink);text-decoration:none;text-align:left;cursor:pointer;transition:background-color var(--fast) var(--ease)}
+.menu-item svg.lucide{color:var(--muted)}
+.menu-item:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.menu-item:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.menu-item.perigo,.menu-item.perigo svg.lucide{color:var(--bad)}
+.menu-item:disabled{opacity:.6;cursor:progress}
+.menu-rotulo{font-size:.75rem;font-weight:600;color:var(--muted);padding:4px 10px 6px}
+.tema-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:3px;margin:0 6px 4px;border-radius:var(--r-sm);background:var(--field)}
+.tema-seg button{font:inherit;font-size:.78rem;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 4px;border:0;border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;transition:background-color var(--fast) var(--ease),color var(--fast) var(--ease)}
+.tema-seg button:hover{color:var(--ink)}
+.tema-seg button.ativo{background:var(--surface);color:var(--ink);font-weight:590;box-shadow:var(--shadow-sm)}
+.tema-seg button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+@media (max-width:560px){
+  .nav .esq{gap:8px}
+  .marca-txt,.usuario-nome{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .usuario-btn{padding-right:8px}
+}
+@media (prefers-reduced-motion:reduce){.menu-painel{animation:none}.usuario-btn .seta{transition:none}}
