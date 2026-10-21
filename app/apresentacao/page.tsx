@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import BotaoTema from "@/components/BotaoTema";
 import InclinaPrevia from "@/components/InclinaPrevia";
 import ModalLogin from "@/components/ModalLogin";
+import NavSecoes from "@/components/NavSecoes";
 import PreviaAnalise from "@/components/PreviaAnalise";
 import { ROTA_LOGIN } from "@/lib/rotas";
 import { ENTRADAS_VAZIAS, analisar, indicadores } from "@/lib/analise/analise";
@@ -20,7 +21,7 @@ const SECOES = [
   ["#como-funciona", "Como funciona"],
   ["#indicadores", "Indicadores"],
   ["#planos", "Planos"],
-];
+] as const;
 
 const PASSOS = [
   { Icone: Keyboard, titulo: "Insira os números", texto: "Dias, investimento, impressões, cliques, vendas, ROAS e TACOS do período, direto do painel de anúncios." },
@@ -43,9 +44,7 @@ export default function Apresentacao() {
       <nav className="nav lp-nav">
         <div className="in">
           <Link href="/" className="marca"><span className="logo"><BarChart3 /></span><span className="marca-txt">Análise ADS</span></Link>
-          <div className="nav-links lp-secoes">
-            {SECOES.map(([href, rotulo]) => <a key={href} href={href} className="lnk">{rotulo}</a>)}
-          </div>
+          <NavSecoes secoes={SECOES} />
           <div className="btns">
             <BotaoTema className="btn icone lp-ghost" />
             <Link href={ROTA_LOGIN} scroll={false} className="btn lp-ghost">Entrar</Link>
