@@ -41,7 +41,7 @@
 | Obsidian | Não adotado: sem necessidade concreta; memória nativa basta | — | Inaplicável |
 | Memória | CLAUDE.md → AGENTS.md → docs versionados; memória automática do Claude Code como complemento | Projeto | **Configurado** |
 | Hooks | Nenhum hook próprio; proteção do `.env` por `permissions.deny` (vale para Read/Edit e comandos de arquivo do Bash, não para scripts que abrem o arquivo sozinhos). Hooks do RTK e do security-guidance vêm das próprias ferramentas | Projeto | **Configurado**: `.claude/settings.json` ativo; regras deny carregadas com os plugins |
-| agent-browser | Pré-requisito do `next-dev-loop` | Usuário | **Instalado com ressalva**: 0.39.1 + Chrome 156. Todas as versões ≥ 0.31.1 exigem Node ≥ 24; a máquina está no Node 22.18 (aviso EBADENGINE). Atualizar o Node para 24 LTS se o `next-dev-loop` falhar |
+| agent-browser | Pré-requisito do `next-dev-loop` | Usuário | **Instalado**: 0.39.1 + Chrome 156. Exige Node ≥ 24: Node atualizado de 22.18 para 24.20.0 LTS (winget) em 21/10/2026 |
 | Chrome DevTools MCP | `.mcp.json` com `--isolated` (perfil temporário, sem sessões pessoais) e `--no-usage-statistics` | Projeto | **Aprovado** no Claude Code; uso real ainda não feito |
 | Anthropic skills (skill-creator, document-skills) | Não instaladas: sem necessidade no projeto; o Claude Code já cria skills | — | Inaplicável |
 | Codex | Não usado | — | Inaplicável |

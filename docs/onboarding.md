@@ -4,7 +4,7 @@
 
 | Ferramenta | Para quê | Verificar |
 |---|---|---|
-| Node.js ≥ 20.9 (LTS recomendado) e npm | rodar o projeto | `node -v` |
+| Node.js ≥ 20.9 e npm (recomendado 24 LTS, exigido pelo agent-browser) | rodar o projeto | `node -v` |
 | Git | versão e histórico local | `git --version` |
 | Conta no Supabase | banco e login | — |
 | Python 3 | scripts da skill `ui-ux-pro-max` (no Windows o comando é `python`) | `python --version` |
