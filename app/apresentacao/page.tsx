@@ -47,10 +47,10 @@ export default function Apresentacao() {
           <Link href="/" className="marca"><span className="logo"><BarChart3 /></span><span className="marca-txt">Análise ADS</span></Link>
           <NavSecoes secoes={SECOES} />
           <div className="btns">
-            <MenuSecoesMobile secoes={SECOES} />
-            <BotaoTema className="btn icone lp-ghost" />
-            <Link href={ROTA_LOGIN} scroll={false} className="btn lp-ghost">Entrar</Link>
+            <BotaoTema className="btn icone lp-ghost lp-nav-tema" />
+            <Link href={ROTA_LOGIN} scroll={false} className="btn lp-ghost lp-nav-entrar">Entrar</Link>
             <Link href={ROTA_CADASTRO} scroll={false} className="btn primary lp-nav-cta">Começar agora</Link>
+            <MenuSecoesMobile secoes={SECOES} />
           </div>
         </div>
       </nav>

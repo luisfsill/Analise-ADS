@@ -2,6 +2,7 @@
 import { CircleAlert, CircleCheck, UserPlus } from "lucide-react";
 import { useId, useState } from "react";
 import BotaoFecharModal from "@/components/BotaoFecharModal";
+import { ConteudoCarregando } from "@/components/Carregando";
 import LinksNeon from "@/components/LinksNeon";
 import { VERSAO_PRIVACIDADE, VERSAO_TERMOS } from "@/lib/legal";
 import type { TelaAcesso } from "@/lib/rotas";
@@ -68,7 +69,7 @@ export default function CardCadastro({ aoFechar, aoTrocar }: { aoFechar: () => v
               </label>
             </div>
             {erro && <p className="msg-erro" role="alert"><CircleAlert />{erro}</p>}
-            <button className="btn primary" disabled={carregando} aria-busy={carregando}><UserPlus />{carregando ? "Criando…" : "Criar conta"}</button>
+            <button className={"btn primary" + (carregando ? " carregando" : "")} disabled={carregando} aria-busy={carregando}>{carregando ? <ConteudoCarregando mensagens={["Criando sua conta…", "Preparando seu teste grátis…"]} /> : <><UserPlus />Criar conta</>}</button>
           </form>
           <LinksNeon><button type="button" className="link-btn" onClick={() => aoTrocar("login")}>Já tenho conta</button></LinksNeon>
         </>

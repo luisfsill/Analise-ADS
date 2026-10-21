@@ -2,6 +2,7 @@
 import { CircleAlert, CircleCheck, KeyRound, Send } from "lucide-react";
 import { useId, useState } from "react";
 import BotaoFecharModal from "@/components/BotaoFecharModal";
+import { ConteudoCarregando } from "@/components/Carregando";
 import LinksNeon from "@/components/LinksNeon";
 import type { TelaAcesso } from "@/lib/rotas";
 import { criarClienteNavegador } from "@/lib/supabase/client";
@@ -38,7 +39,7 @@ export default function CardRecuperar({ aoFechar, aoTrocar }: { aoFechar: () => 
           <form onSubmit={(e) => void enviar(e)}>
             <div className="f"><label htmlFor={id + "-email"}>E-mail</label><div className="box"><input id={id + "-email"} type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div></div>
             {erro && <p className="msg-erro" role="alert"><CircleAlert />{erro}</p>}
-            <button className="btn primary" disabled={carregando} aria-busy={carregando}><Send />{carregando ? "Enviando…" : "Enviar link"}</button>
+            <button className={"btn primary" + (carregando ? " carregando" : "")} disabled={carregando} aria-busy={carregando}>{carregando ? <ConteudoCarregando mensagens={["Enviando o link…"]} /> : <><Send />Enviar link</>}</button>
           </form>
         </>
       )}
