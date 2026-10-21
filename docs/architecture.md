@@ -21,7 +21,9 @@ app/
   layout.tsx                    HTML raiz, fontes, metadados
   globals.css                   todos os estilos e tokens
   apresentacao/                 página pública de vendas (page.tsx + landing.css, escopo .lp); servida em "/" para visitantes
-  login, cadastro, recuperar-senha, redefinir-senha   telas públicas (client components)
+  apresentacao/                 landing pública (visitante em /) + modal de acesso
+  (legal)/termos, privacidade   documentos legais públicos (components/DocumentoLegal.tsx, dados em lib/legal.ts)
+  redefinir-senha               nova senha depois do link de recuperação
   assinatura/page.tsx           teste/plano vencido ou conta inativa
   auth/callback/route.ts        links de e-mail (token_hash ou code), redirect seguro
   (app)/layout.tsx              área logada: exige login + tem_acesso; faixa de teste
@@ -51,7 +53,7 @@ eslint-rules/, eslint*.mjs      quality gates (ver docs/quality.md)
 
 ## Fronteiras e fluxo
 
-1. `proxy.ts` roda antes de cada página: renova a sessão Supabase e manda quem não está logado para `/?entrar=1`, a apresentação com o modal de login aberto (rotas públicas: cadastro, recuperar-senha, auth, apresentacao). Não existe página `/login`: o login é o modal `components/ModalLogin.tsx` com o card `components/CardLogin.tsx`. Visitante em `/` recebe a apresentação por rewrite (a URL continua `/`); logado em `/` vê o histórico.
+1. `proxy.ts` roda antes de cada página: renova a sessão Supabase e manda quem não está logado para `/?entrar=1`, a apresentação com o modal de login aberto (rotas públicas: auth, apresentacao, termos, privacidade). Não existem páginas `/login`, `/cadastro` nem `/recuperar-senha`: entrar, criar conta e recuperar senha são telas do modal `components/ModalLogin.tsx` (`?entrar=1|cadastro|recuperar`, ver `lib/rotas.ts`), com os cards `CardLogin`, `CardCadastro` e `CardRecuperar`. Visitante em `/` recebe a apresentação por rewrite (a URL continua `/`); logado em `/` vê o histórico.
 2. `app/(app)/layout.tsx` (servidor) busca o perfil e redireciona para `/assinatura` sem acesso válido.
 3. Páginas de servidor leem dados com `criarClienteServidor()`; componentes de cliente gravam com `criarClienteNavegador()`. Ambos agem **como o usuário** e passam pela RLS.
 4. Só as server actions de `app/(app)/admin/actions.ts` usam `criarClienteServico()`, depois de `exigirAdmin()`.

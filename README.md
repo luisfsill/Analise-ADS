@@ -79,7 +79,9 @@ Passo a passo completo em [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
 ```
 app/
-  login, cadastro, recuperar-senha, redefinir-senha   telas públicas de acesso
+  apresentacao/                 landing pública; entrar, criar conta e recuperar senha num modal
+  (legal)/termos, privacidade   Termos de Uso e Política de Privacidade (dados do responsável em lib/legal.ts)
+  redefinir-senha               nova senha depois do link de recuperação
   auth/callback/route.ts       recebe os links enviados por e-mail
   assinatura                   tela de teste/plano vencido
   (app)/layout.tsx             área logada: exige login + acesso válido; faixa de teste grátis

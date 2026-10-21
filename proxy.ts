@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Rotas que não exigem login
-const ROTAS_PUBLICAS = ["/cadastro", "/recuperar-senha", "/auth", "/apresentacao"];
+const ROTAS_PUBLICAS = ["/auth", "/apresentacao", "/termos", "/privacidade"];
 
 /**
  * Roda antes de cada página (no Next 16 o antigo middleware.ts se chama proxy.ts).
@@ -53,7 +53,6 @@ export async function proxy(request: NextRequest) {
     response.cookies.getAll().forEach((c) => r.cookies.set(c));
     return r;
   }
-  if (user && caminho === "/cadastro") return redirecionar("/");
   return response;
 }
 

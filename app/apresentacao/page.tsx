@@ -7,7 +7,7 @@ import InclinaPrevia from "@/components/InclinaPrevia";
 import ModalLogin from "@/components/ModalLogin";
 import NavSecoes from "@/components/NavSecoes";
 import PreviaAnalise from "@/components/PreviaAnalise";
-import { ROTA_LOGIN } from "@/lib/rotas";
+import { ROTA_CADASTRO, ROTA_LOGIN } from "@/lib/rotas";
 import { ENTRADAS_VAZIAS, analisar, indicadores } from "@/lib/analise/analise";
 import "./landing.css";
 
@@ -48,7 +48,7 @@ export default function Apresentacao() {
           <div className="btns">
             <BotaoTema className="btn icone lp-ghost" />
             <Link href={ROTA_LOGIN} scroll={false} className="btn lp-ghost">Entrar</Link>
-            <Link href="/cadastro" className="btn primary">Começar agora</Link>
+            <Link href={ROTA_CADASTRO} scroll={false} className="btn primary">Começar agora</Link>
           </div>
         </div>
       </nav>
@@ -59,7 +59,7 @@ export default function Apresentacao() {
           <h1 className="lp-titulo">Descubra onde sua campanha está travando.</h1>
           <p className="lp-sub">Digite os números do período do Mercado Livre Ads e receba na hora uma nota de 0 a 100, o gargalo do funil e um plano de ação priorizado.</p>
           <div className="btns lp-ctas">
-            <Link href="/cadastro" className="btn primary lp-cta">Começar teste grátis<ArrowRight /></Link>
+            <Link href={ROTA_CADASTRO} scroll={false} className="btn primary lp-cta">Começar teste grátis<ArrowRight /></Link>
             <a href="#como-funciona" className="btn lp-ghost lp-cta">Ver como funciona</a>
           </div>
           <p className="lp-nota">7 dias grátis · sem cartão de crédito</p>
@@ -133,7 +133,7 @@ export default function Apresentacao() {
                 <p className="lp-preco"><span className="num">{p.preco}</span> {p.periodo}</p>
                 <p>{p.texto}</p>
                 <ul>{INCLUSO.map((item) => <li key={item}><Check />{item}</li>)}</ul>
-                <Link href="/cadastro" className={"btn lp-cta" + (p.destaque ? " primary" : " lp-ghost")}>{p.cta}</Link>
+                <Link href={ROTA_CADASTRO} scroll={false} className={"btn lp-cta" + (p.destaque ? " primary" : " lp-ghost")}>{p.cta}</Link>
               </article>
             ))}
           </div>
@@ -143,7 +143,7 @@ export default function Apresentacao() {
         <section className="lp-secao lp-final" aria-labelledby="hFinal">
           <h2 id="hFinal" className="lp-h2">Sua próxima campanha começa com um diagnóstico.</h2>
           <p className="lp-sub">Crie sua conta e faça a primeira análise em menos de um minuto.</p>
-          <Link href="/cadastro" className="btn primary lp-cta">Começar teste grátis<ArrowRight /></Link>
+          <Link href={ROTA_CADASTRO} scroll={false} className="btn primary lp-cta">Começar teste grátis<ArrowRight /></Link>
         </section>
       </main>
 
@@ -153,7 +153,9 @@ export default function Apresentacao() {
           <nav className="lp-rodape-links" aria-label="Rodapé">
             {SECOES.map(([href, rotulo]) => <a key={href} href={href}>{rotulo}</a>)}
             <Link href={ROTA_LOGIN} scroll={false}>Entrar</Link>
-            <Link href="/cadastro">Criar conta</Link>
+            <Link href={ROTA_CADASTRO} scroll={false}>Criar conta</Link>
+            <Link href="/termos">Termos de Uso</Link>
+            <Link href="/privacidade">Política de Privacidade</Link>
           </nav>
           <span className="lp-rodape-fim">© {new Date().getFullYear()} Análise ADS</span>
         </div>

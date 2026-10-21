@@ -1,12 +1,13 @@
 "use client";
-import { BarChart3, CircleAlert, LogIn, X } from "lucide-react";
-import Link from "next/link";
+import { BarChart3, CircleAlert, LogIn } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
+import BotaoFecharModal from "@/components/BotaoFecharModal";
+import type { TelaAcesso } from "@/lib/rotas";
 import { criarClienteNavegador } from "@/lib/supabase/client";
 
-/** Card de login (o mesmo da antiga página /login), usado dentro do modal da apresentação. */
-export default function CardLogin({ erroInicial = "", aoFechar }: { erroInicial?: string; aoFechar?: () => void }) {
+/** Tela "Entrar" do modal de acesso. */
+export default function CardLogin({ erroInicial = "", aoFechar, aoTrocar }: { erroInicial?: string; aoFechar: () => void; aoTrocar: (t: TelaAcesso) => void }) {
   const router = useRouter();
   const id = useId();
   const [email, setEmail] = useState("");
@@ -30,13 +31,9 @@ export default function CardLogin({ erroInicial = "", aoFechar }: { erroInicial?
 
   return (
     <div className="card">
-      {aoFechar && (
-        <button type="button" className="btn icone fechar-modal" onClick={aoFechar} aria-label="Fechar">
-          <X />
-        </button>
-      )}
+      <BotaoFecharModal aoFechar={aoFechar} />
       <span className="marca-auth"><BarChart3 /></span>
-      <h1 id={id + "-titulo"}>Entrar</h1>
+      <h1>Entrar</h1>
       <p className="sub">Análise de performance dos anúncios</p>
       <form onSubmit={(e) => void entrar(e)}>
         <div className="f"><label htmlFor={id + "-email"}>E-mail</label><div className="box"><input id={id + "-email"} type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div></div>
@@ -44,7 +41,10 @@ export default function CardLogin({ erroInicial = "", aoFechar }: { erroInicial?
         {erro && <p className="msg-erro" role="alert"><CircleAlert />{erro}</p>}
         <button className="btn primary" disabled={carregando} aria-busy={carregando}><LogIn />{carregando ? "Entrando…" : "Entrar"}</button>
       </form>
-      <div className="links"><Link href="/cadastro">Criar conta</Link><Link href="/recuperar-senha">Esqueci minha senha</Link></div>
+      <div className="links">
+        <button type="button" className="link-btn" onClick={() => aoTrocar("cadastro")}>Criar conta</button>
+        <button type="button" className="link-btn" onClick={() => aoTrocar("recuperar")}>Esqueci minha senha</button>
+      </div>
     </div>
   );
 }

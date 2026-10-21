@@ -99,7 +99,7 @@ Scripts das skills que acessam rede ou fazem upload (nada roda sozinho; o AGENTS
 | `npm run check` no Windows | Validado | 21/10/2026, PowerShell, Node 22.18: lint, tipos, regras (3× ok), 12/12 testes e build concluídos. Node 24.20: lint, tipos, regras e testes ok; build passou depois de reinstalar `node_modules` (ver `docs/onboarding.md`, problemas conhecidos) |
 | Plugins no Claude Code | Validado | `/plugin list`: 7 plugins, escopo projeto, todos *enabled* |
 | MCPs no Claude Code | Validado parcialmente | os dois aprovados; status de conexão e consulta real ainda não observados |
-| Execução local (`next start -p 3002`) | Validado parcialmente | `/` (apresentação) e `/cadastro` 200; rotas logadas exigem `.env` (sem credenciais, o app mostra o erro de configuração). Fluxo completo com Supabase real: pendente, depende das suas credenciais |
+| Execução local (`next start -p 3002`) | Validado parcialmente | `/` (apresentação), `/termos` e `/privacidade` 200; rotas logadas exigem `.env` (sem credenciais, o app mostra o erro de configuração). Fluxo completo com Supabase real: pendente, depende das suas credenciais |
 | Reexecução sem duplicação | Revisão estática | skills em cópia com lock; `.mcp.json` com um servidor de cada; nenhum hook duplicado. Reinstalação completa não foi repetida |
 | Teste de harness em sessão limpa | Validado | Claude Code (Opus 5.5) respondeu "comandos canônicos e skill de interface" a partir do AGENTS.md, com porta 3002 |
 

@@ -38,7 +38,7 @@ Se um cliente quiser colocar funcionários na mesma conta, criar a tabela `organ
 
 ## Cuidados
 
-- **LGPD**: o app guarda nome e e-mail. Para vender, publique termos de uso e política de privacidade e informe o link na tela de cadastro.
+- **LGPD**: Termos de Uso (`/termos`) e Política de Privacidade (`/privacidade`) publicados, com aceite obrigatório no cadastro (data e versão gravadas na conta). Antes de vender: preencher os dados do responsável em `lib/legal.ts` e pedir revisão de um advogado. Ao mudar o texto, atualizar `VERSAO_TERMOS`/`VERSAO_PRIVACIDADE`.
 - Os textos do plano de ação citam ferramentas de terceiros (AvantPro, JoomPulse) e recursos do Mercado Livre (Central de Promoções, Decola, Flex, Full). Os nomes e regras mudam com o tempo; revise periodicamente.
 - Não usar marcas ou nomes de metodologias de terceiros no app sem autorização do dono.
 - Plano gratuito do Supabase pausa o projeto após 7 dias sem nenhum acesso e não tem backup automático. Com clientes pagantes, vale o plano Pro.
