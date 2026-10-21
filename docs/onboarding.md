@@ -59,7 +59,7 @@ Esperado: lint sem erros, tipos ok, self-check das regras com três linhas `ok`,
 
 ## Agentes
 
-Leia [AGENTS.md](../AGENTS.md). O [CLAUDE.md](../CLAUDE.md) importa as mesmas instruções. Skills, plugins e MCPs configurados e seu estado: [setup.md](setup.md).
+As instruções para agentes (`AGENTS.md`, `CLAUDE.md`), as skills (`.claude/skills/`), os plugins (`.claude/settings.json`) e os MCPs (`.mcp.json`) ficam só no computador de desenvolvimento, fora do Git. Para recriar em outra máquina, siga [setup.md](setup.md).
 
 Ao abrir a pasta no Claude Code pela primeira vez: confie na pasta, aceite instalar os plugins do projeto e aprove os servidores MCP `context7` e `chrome-devtools`.
 

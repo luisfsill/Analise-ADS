@@ -26,7 +26,6 @@ Documentação do projeto:
 | Documento | Conteúdo |
 |---|---|
 | [`PRODUCT.md`](PRODUCT.md) | produto, escopo, critérios de aceite, decisões pendentes |
-| [`AGENTS.md`](AGENTS.md) / [`CLAUDE.md`](CLAUDE.md) | instruções para agentes de IA (comandos, restrições, skills) |
 | [`docs/architecture.md`](docs/architecture.md) | mapa do código, fronteiras, dados e decisões técnicas |
 | [`docs/design.md`](docs/design.md) | sistema visual e acessibilidade |
 | [`docs/onboarding.md`](docs/onboarding.md) | preparar e rodar localmente |
@@ -104,9 +103,6 @@ lib/
 proxy.ts                       protege as rotas: quem não está logado vai para /login
 supabase/schema.sql            banco e regras de segurança
 tests/analise.test.ts          testes das regras
-prototipo/analise-performance.html   versão original em HTML único (referência visual e de regras)
-base-de-conhecimento-mentoria.md     base de conhecimento da mentoria (texto para ler ou alimentar IA)
-regras-plano-de-acao.json            as mesmas regras do diagnóstico em formato de dados
 ```
 
 ## Onde mexer

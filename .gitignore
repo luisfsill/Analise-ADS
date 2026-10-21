@@ -18,3 +18,11 @@ graphify-out/
 # Python
 __pycache__/
 *.pyc
+
+# Ferramentas de IA (ficam só no computador de desenvolvimento; ver docs/setup.md)
+.claude/
+.mcp.json
+AGENTS.md
+CLAUDE.md
+skills-lock.json
+.graphifyignore

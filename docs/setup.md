@@ -13,6 +13,8 @@
 
 ## Decisões
 
+> **21/10/2026:** as ferramentas de IA (`.claude/`, `.mcp.json`, `AGENTS.md`, `CLAUDE.md`, `skills-lock.json`, `.graphifyignore`) saíram do repositório a pedido do usuário e ficam só no computador de desenvolvimento (estão no `.gitignore`). Para recriar em outra máquina: rodar os comandos de instalação desta página (skills, UI/UX Pro Max, plugins) e recriar `.claude/settings.json` com o conteúdo da seção "Pendências". O material de referência (`prototipo/`, `base-de-conhecimento-mentoria.md`, `regras-plano-de-acao.json`) foi removido; continua no histórico do Git (commit `3bd687a`).
+
 | Decisão | Motivo |
 |---|---|
 | Não aplicar os padrões de projeto novo (Drizzle, Tailwind, Zod, Pino) | O toolkit manda preservar a stack existente; Supabase + CSS puro já atendem |
