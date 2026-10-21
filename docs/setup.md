@@ -94,7 +94,7 @@ Scripts das skills que acessam rede ou fazem upload (nada roda sozinho; o AGENTS
 | `npm run build` | Validado | build concluído (igual a antes) |
 | `npm audit --omit=dev` | Validado | 0 vulnerabilidades |
 | `npm audit` (completo) | Validado com ressalva | 5 *high* em `braces`, só no lint, sem correção publicada (ver `docs/quality.md`) |
-| `npm run check` no Windows | Validado | 21/10/2026, PowerShell: lint, tipos, regras (3× ok), 12/12 testes e build concluídos |
+| `npm run check` no Windows | Validado | 21/10/2026, PowerShell, Node 22.18: lint, tipos, regras (3× ok), 12/12 testes e build concluídos. Node 24.20: lint, tipos, regras e testes ok; build passou depois de reinstalar `node_modules` (ver `docs/onboarding.md`, problemas conhecidos) |
 | Plugins no Claude Code | Validado | `/plugin list`: 7 plugins, escopo projeto, todos *enabled* |
 | MCPs no Claude Code | Validado parcialmente | os dois aprovados; status de conexão e consulta real ainda não observados |
 | Execução local (`next start -p 3002`) | Validado parcialmente | `/login` e `/cadastro` 200; rotas logadas exigem `.env` (sem credenciais, o app mostra o erro de configuração). Fluxo completo com Supabase real: pendente, depende das suas credenciais |
