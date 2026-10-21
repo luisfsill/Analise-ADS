@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "./acesso.css";
+import "./responsivo.css";
 
 export const metadata: Metadata = {
   title: "Análise de performance dos anúncios",

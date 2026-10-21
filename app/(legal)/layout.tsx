@@ -15,7 +15,7 @@ export default function LayoutLegal({ children }: { children: React.ReactNode })
           <div className="btns">
             <BotaoTema className="btn icone lp-ghost" />
             <Link href={ROTA_LOGIN} className="btn lp-ghost">Entrar</Link>
-            <Link href={ROTA_CADASTRO} className="btn primary">Começar agora</Link>
+            <Link href={ROTA_CADASTRO} className="btn primary lp-nav-cta">Começar agora</Link>
           </div>
         </div>
       </nav>

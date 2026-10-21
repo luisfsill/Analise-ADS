@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import BotaoTema from "@/components/BotaoTema";
 import InclinaPrevia from "@/components/InclinaPrevia";
 import ModalLogin from "@/components/ModalLogin";
+import MenuSecoesMobile from "@/components/MenuSecoesMobile";
 import NavSecoes from "@/components/NavSecoes";
 import PreviaAnalise from "@/components/PreviaAnalise";
 import { ROTA_CADASTRO, ROTA_LOGIN } from "@/lib/rotas";
@@ -46,9 +47,10 @@ export default function Apresentacao() {
           <Link href="/" className="marca"><span className="logo"><BarChart3 /></span><span className="marca-txt">Análise ADS</span></Link>
           <NavSecoes secoes={SECOES} />
           <div className="btns">
+            <MenuSecoesMobile secoes={SECOES} />
             <BotaoTema className="btn icone lp-ghost" />
             <Link href={ROTA_LOGIN} scroll={false} className="btn lp-ghost">Entrar</Link>
-            <Link href={ROTA_CADASTRO} scroll={false} className="btn primary">Começar agora</Link>
+            <Link href={ROTA_CADASTRO} scroll={false} className="btn primary lp-nav-cta">Começar agora</Link>
           </div>
         </div>
       </nav>

@@ -1,0 +1,28 @@
+/* Modal de acesso (entrar, criar conta, recuperar senha) e aceite dos documentos. */
+/* ---- Modal de login (apresentação) ---- */
+@keyframes modal-entrar{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes fundo-entrar{from{opacity:0}to{opacity:1}}
+.modal-login{padding:0;border:0;background:transparent;color:var(--ink);width:min(400px,calc(100% - 32px));max-width:none;max-height:calc(100dvh - 32px);overflow:auto;margin:auto;overscroll-behavior:contain}
+.modal-login::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.modal-login[open]{animation:modal-entrar .3s var(--ease-out)}
+.modal-login[open]::backdrop{animation:fundo-entrar .3s ease}
+.modal-login .card{position:relative;width:100%;padding:36px 32px;background:radial-gradient(520px 260px at 50% -12%,var(--accent-soft),transparent 72%),var(--bg);border-color:var(--glass-line);box-shadow:var(--shadow-lg);-webkit-backdrop-filter:saturate(180%) blur(32px);backdrop-filter:saturate(180%) blur(32px)}
+.fechar-modal{position:absolute;top:14px;right:14px;width:36px;min-height:36px;background:transparent;border-color:transparent}
+.fechar-modal:hover{background:color-mix(in srgb,var(--ink) 8%,transparent)}
+html:has(.modal-login[open]){overflow:hidden}
+@media (prefers-reduced-motion:reduce){.modal-login[open],.modal-login[open]::backdrop{animation:none}}
+@media (prefers-reduced-transparency:reduce){.modal-login .card{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--surface)}.modal-login::backdrop{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(0,0,0,.75)}}
+/* Troca de tela dentro do modal (entrar ↔ criar conta ↔ recuperar senha) */
+@keyframes troca-card{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.modal-login .card{animation:troca-card .28s var(--ease-out)}
+.links.links-neon{position:relative;justify-content:center;gap:8px 28px}
+.link-btn{font:inherit;font-family:"Plus Jakarta Sans",var(--body);font-size:.9rem;font-weight:550;padding:8px 2px;border:0;background:none;color:var(--ink);cursor:pointer;border-radius:4px;transition:color var(--fast) var(--ease)}
+.link-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.links-neon .lp-sublinhado{bottom:2px}
+/* Aceite dos Termos e da Política no cadastro */
+.aceites{display:flex;flex-direction:column;gap:10px;margin-top:2px}
+.aceite{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;align-items:start;font-size:.86rem;line-height:1.45;color:var(--muted);cursor:pointer}
+.aceite input{width:16px;height:16px;margin:2px 0 0;accent-color:var(--cta);cursor:pointer}
+.aceite input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.aceite a{color:var(--accent);font-weight:500}
+@media (prefers-reduced-motion:reduce){.modal-login .card{animation:none}}

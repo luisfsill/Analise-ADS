@@ -3,6 +3,7 @@ import { BarChart3, CircleAlert, LogIn } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import BotaoFecharModal from "@/components/BotaoFecharModal";
+import LinksNeon from "@/components/LinksNeon";
 import type { TelaAcesso } from "@/lib/rotas";
 import { criarClienteNavegador } from "@/lib/supabase/client";
 
@@ -41,10 +42,10 @@ export default function CardLogin({ erroInicial = "", aoFechar, aoTrocar }: { er
         {erro && <p className="msg-erro" role="alert"><CircleAlert />{erro}</p>}
         <button className="btn primary" disabled={carregando} aria-busy={carregando}><LogIn />{carregando ? "Entrando…" : "Entrar"}</button>
       </form>
-      <div className="links">
+      <LinksNeon>
         <button type="button" className="link-btn" onClick={() => aoTrocar("cadastro")}>Criar conta</button>
         <button type="button" className="link-btn" onClick={() => aoTrocar("recuperar")}>Esqueci minha senha</button>
-      </div>
+      </LinksNeon>
     </div>
   );
 }

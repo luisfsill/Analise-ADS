@@ -1,0 +1,53 @@
+/* Ajustes para celular e tablet. Carregado por último para sobrescrever app/globals.css. */
+/* ---- Responsivo: área logada, modal e telas de acesso (celular e tablet) ---- */
+@media (max-width:560px){
+  .card{padding:20px 18px}
+  .top .btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  .top .btns .salvo{grid-column:1/-1}
+  .top .btns .btn{width:100%}
+  .top .btns .btn.primary{grid-column:1/-1}
+  .inputs{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .more .inputs{grid-template-columns:1fr}
+  .camp{max-width:none}
+  .stat .v{font-size:clamp(1.05rem,4.6vw,1.45rem);overflow-wrap:anywhere}
+  .action>summary{gap:10px;padding:12px 12px 12px 0}
+  .action .body{padding:0 12px 14px 14px}
+  .step label{padding:8px 4px}
+  .item{grid-template-columns:44px minmax(0,1fr) 16px;gap:2px 12px;padding:12px 6px}
+  .item .nota{width:44px;height:44px;grid-row:1/span 2}
+  .item>span:nth-child(2){grid-column:2;grid-row:1}
+  .item>.m{grid-column:2;grid-row:2;font-size:.8rem}
+  .item .chev{grid-column:3;grid-row:1/span 2}
+  .item+.item::before{left:62px}
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .kpis .stat{padding:14px 12px}
+  .kpis .stat .v{font-size:1.35rem}
+  :is(.auth,.modal-login) .card,.modal-login .card{padding:30px 22px 26px}
+  .fechar-modal{top:10px;right:10px}
+}
+@media (max-width:360px){
+  .inputs{grid-template-columns:1fr}
+  .summary{grid-template-columns:1fr}
+  .summary .stat:last-child{grid-column:auto}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+/* Painel admin: no celular a tabela vira cartões, um por cliente */
+@media (max-width:720px){
+  .tabela-admin{min-width:0}
+  .tabela-admin thead{display:none}
+  .tabela-admin,.tabela-admin tbody{display:block}
+  .tabela-admin tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;padding:16px 2px;border-bottom:1px solid var(--line)}
+  .tabela-admin td{display:block;padding:0;border:0}
+  .tabela-admin td:nth-child(2){grid-column:2;grid-row:1;justify-self:end}
+  .tabela-admin td:nth-child(3),.tabela-admin td:nth-child(4),.tabela-admin td:nth-child(5){grid-column:1/-1;display:flex;justify-content:space-between;gap:12px;font-size:.88rem}
+  .tabela-admin td:nth-child(3)::before{content:"Vence em";color:var(--muted)}
+  .tabela-admin td:nth-child(4)::before{content:"Análises";color:var(--muted)}
+  .tabela-admin td:nth-child(5)::before{content:"Último acesso";color:var(--muted)}
+  .tabela-admin td:nth-child(6){grid-column:1/-1;margin-top:4px}
+  .tabela-admin .acoes{justify-content:flex-start;flex-wrap:wrap}
+  .tabela-admin .btn.mini{min-height:38px;padding:7px 14px}
+  .tabela-admin tr.editor{display:block;padding:4px 0 16px}
+  .tabela-admin tr.editor td{display:block}
+  .filtros{width:100%}
+  .filtros .box:first-child{flex:1 1 100%}
+}

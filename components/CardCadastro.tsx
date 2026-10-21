@@ -2,6 +2,7 @@
 import { CircleAlert, CircleCheck, UserPlus } from "lucide-react";
 import { useId, useState } from "react";
 import BotaoFecharModal from "@/components/BotaoFecharModal";
+import LinksNeon from "@/components/LinksNeon";
 import { VERSAO_PRIVACIDADE, VERSAO_TERMOS } from "@/lib/legal";
 import type { TelaAcesso } from "@/lib/rotas";
 import { criarClienteNavegador } from "@/lib/supabase/client";
@@ -47,7 +48,7 @@ export default function CardCadastro({ aoFechar, aoTrocar }: { aoFechar: () => v
       {ok ? (
         <>
           <p className="msg-ok" role="status"><CircleCheck />Conta criada. Enviamos um link de confirmação para {email}.</p>
-          <div className="links"><button type="button" className="link-btn" onClick={() => aoTrocar("login")}>Ir para o login</button></div>
+          <LinksNeon><button type="button" className="link-btn" onClick={() => aoTrocar("login")}>Ir para o login</button></LinksNeon>
         </>
       ) : (
         <>
@@ -69,7 +70,7 @@ export default function CardCadastro({ aoFechar, aoTrocar }: { aoFechar: () => v
             {erro && <p className="msg-erro" role="alert"><CircleAlert />{erro}</p>}
             <button className="btn primary" disabled={carregando} aria-busy={carregando}><UserPlus />{carregando ? "Criando…" : "Criar conta"}</button>
           </form>
-          <div className="links"><button type="button" className="link-btn" onClick={() => aoTrocar("login")}>Já tenho conta</button></div>
+          <LinksNeon><button type="button" className="link-btn" onClick={() => aoTrocar("login")}>Já tenho conta</button></LinksNeon>
         </>
       )}
     </div>

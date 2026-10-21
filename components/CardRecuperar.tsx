@@ -2,6 +2,7 @@
 import { CircleAlert, CircleCheck, KeyRound, Send } from "lucide-react";
 import { useId, useState } from "react";
 import BotaoFecharModal from "@/components/BotaoFecharModal";
+import LinksNeon from "@/components/LinksNeon";
 import type { TelaAcesso } from "@/lib/rotas";
 import { criarClienteNavegador } from "@/lib/supabase/client";
 
@@ -41,7 +42,7 @@ export default function CardRecuperar({ aoFechar, aoTrocar }: { aoFechar: () => 
           </form>
         </>
       )}
-      <div className="links"><button type="button" className="link-btn" onClick={() => aoTrocar("login")}>Voltar ao login</button></div>
+      <LinksNeon><button type="button" className="link-btn" onClick={() => aoTrocar("login")}>Voltar ao login</button></LinksNeon>
     </div>
   );
 }
