@@ -2,13 +2,13 @@
 
 ## Direção
 
-Ferramenta de trabalho para vendedores do Mercado Livre: clara, direta e confiável, com números grandes e status por cor. Português do Brasil. Uso em desktop e celular (o vendedor costuma conferir pelo celular). Tom visual inspirado na linguagem da Apple: muito espaço, cartões brancos (claro) ou grafite `#1C1C1E` (escuro) sobre fundo `#F5F5F7`/preto, bordas finas translúcidas, sombras ambiente difusas, vidro jateado na navegação, um azul de destaque e verde/laranja/vermelho para bom/atenção/crítico.
+Ferramenta de trabalho para vendedores do Mercado Livre: clara, direta e confiável, com números grandes e status por cor. Português do Brasil. Uso em desktop e celular (o vendedor costuma conferir pelo celular). Tom visual inspirado na linguagem da Apple: muito espaço, o mesmo fundo em todas as telas (`#F5F5F7`/preto com brilho azul suave no topo), cartões de vidro translúcido (`--card` com desfoque) e bordas ultrafinas, sem blocos sólidos de grafite; campos e sub-blocos (funil, plano, indicadores) leves e translúcidos; vidro jateado na navegação e no menu, um azul de destaque e verde/laranja/vermelho para bom/atenção/crítico.
 
 ## Sistema existente
 
 Fonte da verdade: `app/globals.css` (não duplicar valores aqui).
 
-- **Tokens** no topo do arquivo, em `:root`, com tema escuro automático (`prefers-color-scheme`) e forçado por `data-theme`: cores (`--bg`, `--surface`, `--ink`, `--muted`, `--line`, `--soft`, `--field`, `--accent`, `--accent-soft`, `--cta`, `--on-cta`, `--good`, `--warn`, `--bad`), vidro (`--glass`, `--glass-line`), sombras (`--shadow-sm`, `--shadow`, `--shadow-lg`), raios (`--r-lg`, `--r-md`, `--r-sm`) e movimento (`--ease`, `--ease-out`, `--fast`, `--med`). `--accent` é para texto/foco; botões principais usam `--cta` (branco sobre `#0071E3`, contraste ≥ 4,5:1 nos dois temas).
+- **Tokens** no topo do arquivo, em `:root`, com tema escuro automático (`prefers-color-scheme`) e forçado por `data-theme`: cores (`--bg`, `--surface`, `--ink`, `--muted`, `--line`, `--soft`, `--field`, `--accent`, `--accent-soft`, `--cta`, `--on-cta`, `--good`, `--warn`, `--bad`), vidro (`--glass`, `--glass-line` para navegação, menu e toast; `--card`, `--card-line`, `--card-shadow` para cartões), sombras (`--shadow-sm`, `--shadow`, `--shadow-lg`), raios (`--r-lg`, `--r-md`, `--r-sm`) e movimento (`--ease`, `--ease-out`, `--fast`, `--med`). `--accent` é para texto/foco; botões principais usam `--cta` (branco sobre `#0071E3`, contraste ≥ 4,5:1 nos dois temas).
 - **Tema**: lógica em `lib/tema.ts` (salva em `localStorage`, chave `tema`); o script inline em `app/layout.tsx` aplica o tema salvo antes da primeira pintura. Nas telas de acesso, `components/BotaoTema.tsx` alterna automático → claro → escuro no canto; na área logada, o seletor fica no menu do usuário.
 - **Barra superior (área logada)**: grade de três colunas: logo "Análise ADS" à esquerda, menus no centro (`components/NavLinks.tsx`, hoje só "Início", com destaque e `aria-current` na página atual) e, à direita, `components/MenuUsuario.tsx`: avatar com iniciais + nome, que abre um painel com nome/e-mail, Minha conta, Painel admin (só `papel = 'admin'`), Aparência (Automático/Claro/Escuro, `role="radiogroup"`) e Sair. Fecha com Esc (foco volta ao botão), clique fora ou troca de página. No celular (< 560px) mostra só os ícones e o avatar. "Nova análise" fica no topo da tela inicial e dentro do painel de análise.
 - **Tipografia**: fonte do sistema da Apple (SF Pro) quando disponível, senão Inter (Google Fonts em `app/layout.tsx`); `--display` para títulos e números, `--body` para texto. Corpo em 16px.
@@ -26,10 +26,12 @@ HTML semântico, navegação por teclado, foco visível (`:focus-visible` com co
 - Largura máxima de conteúdo 1180px (`.wrap`); telas de conta usam `.estreito` (720px).
 - Quebras usadas: 1000px (indicadores 6→3 colunas), 900px (resumo), 820px, 720px (funil vertical), 520px e 480px (celular). Gutter lateral mínimo de 16px com `safe-area-inset`.
 - A tabela do admin rola na horizontal no celular (largura mínima 760px).
-- Estados existentes: vazio no histórico ("Você ainda não salvou nenhuma análise"), plano vazio ("Preencha pelo menos três números…"), erro de carregamento, somente leitura (admin vendo cliente), teste grátis (faixa no topo), acesso vencido (`/assinatura`).
+- Estados existentes: vazio no histórico ("Você ainda não salvou nenhuma análise", direto sobre o fundo, sem cartão), plano vazio ("Preencha pelo menos três números…"), erro de carregamento, somente leitura (admin vendo cliente), teste grátis (faixa no topo), acesso vencido (`/assinatura`).
 - Revisões feitas: telas logadas, admin (desktop e 390px) e assinatura conferidas com Supabase simulado em 20/10/2026.
 - Redesign no estilo Apple em 21/10/2026: login conferido em 390px e desktop, claro e escuro; telas logadas não conferidas no navegador (exigem sessão do Supabase).
 - Barra superior com menu do usuário em 21/10/2026: conferida com Supabase simulado em 1280px (claro e escuro) e 390px, como admin e como cliente; teclado (Esc), clique fora, troca de tema e navegação testados.
+- Barra e menu do usuário em vidro escuro denso (21/10/2026): o vidro da barra fica numa camada `::before` (tokens `--nav-bg`, `--menu-bg`), para o menu ter desfoque próprio; antes, o Chrome ignorava o desfoque do menu dentro da barra e o conteúdo de trás aparecia nítido. Menu 8px abaixo da linha da barra, alinhado à direita com o botão do usuário.
+- Vidro translúcido em 21/10/2026: login conferido em 1280px escuro e 390px claro; formulário, resumo e indicadores conferidos com marcação simulada (sem sessão do Supabase).
 - Ainda não existe: página pública de vendas, logo/marca definitiva (hoje um ícone de gráfico em quadrado azul), estados de carregamento com skeleton.
 
 ## Ferramentas de design instaladas

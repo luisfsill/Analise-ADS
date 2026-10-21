@@ -25,7 +25,7 @@ export default async function Historico() {
         </div>
         <Link href="/analise/nova" className="btn primary"><Plus />Nova análise</Link>
       </header>
-      <section className="card">
+      <section className={analises?.length ? "card" : undefined}>
         {error && <p className="msg-erro">Não foi possível carregar as análises. Recarregue a página.</p>}
         {!error && !analises?.length && (
           <div className="vazio">
