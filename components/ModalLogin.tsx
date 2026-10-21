@@ -10,8 +10,8 @@ const ERRO_LINK = "O link expirou ou já foi usado. Faça login ou peça um novo
 
 /**
  * Modal de acesso da apresentação: entrar, criar conta e recuperar senha, trocando só o card.
- * Abre quando a URL tem ?entrar (=1 login, =cadastro, =recuperar) e fecha com Esc, com o X ou
- * clicando no fundo escurecido. Usa <dialog> nativo: foco preso dentro e ::backdrop escuro.
+ * Abre quando a URL tem ?entrar (=1 login, =cadastro, =recuperar) e fecha só pelo X (ou Esc, para
+ * quem usa teclado). Clicar no fundo escurecido não fecha. Usa <dialog> nativo: foco preso dentro.
  */
 export default function ModalLogin() {
   const params = useSearchParams();
@@ -41,7 +41,6 @@ export default function ModalLogin() {
       className="modal-login"
       aria-label={tela === "cadastro" ? "Criar conta" : tela === "recuperar" ? "Recuperar senha" : "Entrar"}
       onCancel={(e) => { e.preventDefault(); fechar(); }}
-      onClick={(e) => { if (e.target === e.currentTarget) fechar(); }}
     >
       {aberto && tela === "login" && <CardLogin key={"login" + erro} erroInicial={erro} aoFechar={fechar} aoTrocar={trocar} />}
       {aberto && tela === "cadastro" && <CardCadastro key="cadastro" aoFechar={fechar} aoTrocar={trocar} />}
