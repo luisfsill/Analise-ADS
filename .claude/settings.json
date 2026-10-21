@@ -10,6 +10,15 @@
       "Edit(./.env.*.local)"
     ]
   },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "ponytail@ponytail": true,
+    "caveman@caveman": true,
+    "code-review@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true
+  },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
       "source": {
@@ -29,14 +38,5 @@
         "repo": "JuliusBrussee/caveman"
       }
     }
-  },
-  "enabledPlugins": {
-    "superpowers@claude-plugins-official": true,
-    "ponytail@ponytail": true,
-    "caveman@caveman": true,
-    "code-review@claude-plugins-official": true,
-    "pr-review-toolkit@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true
   }
 }

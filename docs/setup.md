@@ -27,22 +27,22 @@
 
 | Componente | Ação e motivo | Escopo | Estado e evidência |
 |---|---|---|---|
-| Claude Code | Pré-requisito | Usuário (Windows) | **Pendente**: instalar (ver abaixo) |
-| Superpowers | Plugin declarado | Projeto (`.claude/settings.json`) | **Configurado sem execução**: declarado em `.claude/settings.json` (21/10/2026); instala ao abrir a pasta no Claude Code |
-| Ponytail (`full`) | Plugin declarado + preferência no AGENTS.md | Projeto | **Configurado sem execução**: declarado em `.claude/settings.json` (21/10/2026); instala ao abrir a pasta no Claude Code |
-| Caveman | Plugin declarado + preferência no AGENTS.md | Projeto | **Configurado sem execução**: declarado em `.claude/settings.json` (21/10/2026); instala ao abrir a pasta no Claude Code |
-| Plugins oficiais `code-review`, `pr-review-toolkit`, `commit-commands`, `security-guidance` | Revisão de código/PR, commits e alertas de padrões inseguros | Projeto | **Configurado sem execução**: declarado em `.claude/settings.json` (21/10/2026); instala ao abrir a pasta no Claude Code |
+| Claude Code | Pré-requisito | Usuário (Windows) | **Validado**: v2.1.305 |
+| Superpowers | Plugin declarado | Projeto (`.claude/settings.json`) | **Validado** (21/10/2026): instalado em escopo de projeto e ativo no `/plugin list` do Claude Code v2.1.305 |
+| Ponytail (`full`) | Plugin declarado + preferência no AGENTS.md | Projeto | **Validado** (21/10/2026): instalado em escopo de projeto e ativo no `/plugin list` do Claude Code v2.1.305 |
+| Caveman | Plugin declarado + preferência no AGENTS.md | Projeto | **Validado** (21/10/2026): instalado em escopo de projeto e ativo no `/plugin list` do Claude Code v2.1.305 |
+| Plugins oficiais `code-review`, `pr-review-toolkit`, `commit-commands`, `security-guidance` | Revisão de código/PR, commits e alertas de padrões inseguros | Projeto | **Validado** (21/10/2026): instalado em escopo de projeto e ativo no `/plugin list` do Claude Code v2.1.305 |
 | Outros plugins oficiais (`feature-dev`, `hookify`, `claude-md-management`, `claude-code-setup`) | Não instalados: duplicam Superpowers ou o harness já escrito | — | Inaplicável |
 | aia-harness | Não instalado: gera a mesma estrutura (agentes, regras, memória) já feita aqui; duplicaria o harness | — | Inaplicável |
 | Subagentes em ondas | Regra copiada para `docs/rules/parallel-subagent-driven-development.md` e referenciada no AGENTS.md | Projeto | **Configurado** |
 | RTK | Só existe em escopo global para Claude Code | Usuário | **Pendente**: instalar no Windows |
-| Context7 | `.mcp.json` (HTTP, sem chave; limite compartilhado) | Projeto | **Configurado sem execução**: aprovar o servidor na primeira sessão |
+| Context7 | `.mcp.json` (HTTP, sem chave; limite compartilhado) | Projeto | **Aprovado** no Claude Code (`enabledMcpjsonServers` em `.claude/settings.local.json`); consulta real ainda não feita |
 | Graphify | `.graphifyignore` + `graphify-out/` no `.gitignore`; CLI global | Projeto + usuário | **Pendente**: instalar CLI e gerar o grafo |
 | Obsidian | Não adotado: sem necessidade concreta; memória nativa basta | — | Inaplicável |
 | Memória | CLAUDE.md → AGENTS.md → docs versionados; memória automática do Claude Code como complemento | Projeto | **Configurado** |
-| Hooks | Nenhum hook próprio; proteção do `.env` por `permissions.deny` (vale para Read/Edit e comandos de arquivo do Bash, não para scripts que abrem o arquivo sozinhos). Hooks do RTK e do security-guidance vêm das próprias ferramentas | Projeto | **Configurado sem execução**: `.claude/settings.json` criado; vale na próxima sessão do Claude Code |
-| agent-browser | Pré-requisito do `next-dev-loop` | Usuário | **Pendente**: instalar no Windows |
-| Chrome DevTools MCP | `.mcp.json` com `--isolated` (perfil temporário, sem sessões pessoais) e `--no-usage-statistics` | Projeto | **Configurado sem execução**: exige Chrome instalado |
+| Hooks | Nenhum hook próprio; proteção do `.env` por `permissions.deny` (vale para Read/Edit e comandos de arquivo do Bash, não para scripts que abrem o arquivo sozinhos). Hooks do RTK e do security-guidance vêm das próprias ferramentas | Projeto | **Configurado**: `.claude/settings.json` ativo; regras deny carregadas com os plugins |
+| agent-browser | Pré-requisito do `next-dev-loop` | Usuário | **Pendente**: 0.27.0 instalada com Chrome 156; o `next-dev-loop` exige ≥ 0.31.1 (`npm i -g agent-browser@0.39.1 --allow-scripts=agent-browser`) |
+| Chrome DevTools MCP | `.mcp.json` com `--isolated` (perfil temporário, sem sessões pessoais) e `--no-usage-statistics` | Projeto | **Aprovado** no Claude Code; uso real ainda não feito |
 | Anthropic skills (skill-creator, document-skills) | Não instaladas: sem necessidade no projeto; o Claude Code já cria skills | — | Inaplicável |
 | Codex | Não usado | — | Inaplicável |
 | Skills Vercel (8) + `find-skills` | `npx skills add … --agent claude-code --copy` | Projeto | **Instalado**: `skills list` encontra todas; `skills-lock.json` |
@@ -94,10 +94,12 @@ Scripts das skills que acessam rede ou fazem upload (nada roda sozinho; o AGENTS
 | `npm run build` | Validado | build concluído (igual a antes) |
 | `npm audit --omit=dev` | Validado | 0 vulnerabilidades |
 | `npm audit` (completo) | Validado com ressalva | 5 *high* em `braces`, só no lint, sem correção publicada (ver `docs/quality.md`) |
-| Plugins, MCPs, carregamento de skills no Claude Code | Configurado sem execução | depende de abrir o projeto no Claude Code no Windows |
+| `npm run check` no Windows | Validado | 21/10/2026, PowerShell: lint, tipos, regras (3× ok), 12/12 testes e build concluídos |
+| Plugins no Claude Code | Validado | `/plugin list`: 7 plugins, escopo projeto, todos *enabled* |
+| MCPs no Claude Code | Validado parcialmente | os dois aprovados; status de conexão e consulta real ainda não observados |
 | Execução local (`next start -p 3002`) | Validado parcialmente | `/login` e `/cadastro` 200; rotas logadas exigem `.env` (sem credenciais, o app mostra o erro de configuração). Fluxo completo com Supabase real: pendente, depende das suas credenciais |
 | Reexecução sem duplicação | Revisão estática | skills em cópia com lock; `.mcp.json` com um servidor de cada; nenhum hook duplicado. Reinstalação completa não foi repetida |
-| Teste de harness em sessão limpa | Pendente | rodar depois que os plugins carregarem (ver abaixo) |
+| Teste de harness em sessão limpa | Validado | Claude Code (Opus 5.5) respondeu "comandos canônicos e skill de interface" a partir do AGENTS.md, com porta 3002 |
 
 ## Pendências no seu computador (Windows)
 

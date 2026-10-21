@@ -11,3 +11,6 @@ next-env.d.ts
 
 # Graphify
 graphify-out/
+
+# Claude Code (configuração pessoal da máquina)
+.claude/settings.local.json
