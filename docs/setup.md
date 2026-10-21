@@ -28,10 +28,10 @@
 | Componente | Ação e motivo | Escopo | Estado e evidência |
 |---|---|---|---|
 | Claude Code | Pré-requisito | Usuário (Windows) | **Pendente**: instalar (ver abaixo) |
-| Superpowers | Plugin declarado | Projeto (`.claude/settings.json`) | **Pendente**: depende de criar `.claude/settings.json` (passo 1 abaixo); depois instala ao abrir a pasta no Claude Code |
-| Ponytail (`full`) | Plugin declarado + preferência no AGENTS.md | Projeto | **Pendente**: depende de criar `.claude/settings.json` (passo 1 abaixo); depois instala ao abrir a pasta no Claude Code |
-| Caveman | Plugin declarado + preferência no AGENTS.md | Projeto | **Pendente**: depende de criar `.claude/settings.json` (passo 1 abaixo); depois instala ao abrir a pasta no Claude Code |
-| Plugins oficiais `code-review`, `pr-review-toolkit`, `commit-commands`, `security-guidance` | Revisão de código/PR, commits e alertas de padrões inseguros | Projeto | **Pendente**: depende de criar `.claude/settings.json` (passo 1 abaixo); depois instala ao abrir a pasta no Claude Code |
+| Superpowers | Plugin declarado | Projeto (`.claude/settings.json`) | **Configurado sem execução**: declarado em `.claude/settings.json` (21/10/2026); instala ao abrir a pasta no Claude Code |
+| Ponytail (`full`) | Plugin declarado + preferência no AGENTS.md | Projeto | **Configurado sem execução**: declarado em `.claude/settings.json` (21/10/2026); instala ao abrir a pasta no Claude Code |
+| Caveman | Plugin declarado + preferência no AGENTS.md | Projeto | **Configurado sem execução**: declarado em `.claude/settings.json` (21/10/2026); instala ao abrir a pasta no Claude Code |
+| Plugins oficiais `code-review`, `pr-review-toolkit`, `commit-commands`, `security-guidance` | Revisão de código/PR, commits e alertas de padrões inseguros | Projeto | **Configurado sem execução**: declarado em `.claude/settings.json` (21/10/2026); instala ao abrir a pasta no Claude Code |
 | Outros plugins oficiais (`feature-dev`, `hookify`, `claude-md-management`, `claude-code-setup`) | Não instalados: duplicam Superpowers ou o harness já escrito | — | Inaplicável |
 | aia-harness | Não instalado: gera a mesma estrutura (agentes, regras, memória) já feita aqui; duplicaria o harness | — | Inaplicável |
 | Subagentes em ondas | Regra copiada para `docs/rules/parallel-subagent-driven-development.md` e referenciada no AGENTS.md | Projeto | **Configurado** |
@@ -40,7 +40,7 @@
 | Graphify | `.graphifyignore` + `graphify-out/` no `.gitignore`; CLI global | Projeto + usuário | **Pendente**: instalar CLI e gerar o grafo |
 | Obsidian | Não adotado: sem necessidade concreta; memória nativa basta | — | Inaplicável |
 | Memória | CLAUDE.md → AGENTS.md → docs versionados; memória automática do Claude Code como complemento | Projeto | **Configurado** |
-| Hooks | Nenhum hook próprio; proteção do `.env` por `permissions.deny` (vale para Read/Edit e comandos de arquivo do Bash, não para scripts que abrem o arquivo sozinhos). Hooks do RTK e do security-guidance vêm das próprias ferramentas | Projeto | **Pendente**: depende de criar `.claude/settings.json` |
+| Hooks | Nenhum hook próprio; proteção do `.env` por `permissions.deny` (vale para Read/Edit e comandos de arquivo do Bash, não para scripts que abrem o arquivo sozinhos). Hooks do RTK e do security-guidance vêm das próprias ferramentas | Projeto | **Configurado sem execução**: `.claude/settings.json` criado; vale na próxima sessão do Claude Code |
 | agent-browser | Pré-requisito do `next-dev-loop` | Usuário | **Pendente**: instalar no Windows |
 | Chrome DevTools MCP | `.mcp.json` com `--isolated` (perfil temporário, sem sessões pessoais) e `--no-usage-statistics` | Projeto | **Configurado sem execução**: exige Chrome instalado |
 | Anthropic skills (skill-creator, document-skills) | Não instaladas: sem necessidade no projeto; o Claude Code já cria skills | — | Inaplicável |
@@ -103,7 +103,7 @@ Scripts das skills que acessam rede ou fazem upload (nada roda sozinho; o AGENTS
 
 ### 1. Arquivo `.claude/settings.json`
 
-O ambiente que fez a instalação bloqueou a gravação desse arquivo (proteção contra um agente alterar configurações de agente). Crie você mesmo o arquivo `.claude/settings.json` com este conteúdo:
+**Feito em 21/10/2026**: o usuário criou o arquivo e autorizou o preenchimento. Conteúdo de referência (para recriar ou comparar):
 
 ```json
 {

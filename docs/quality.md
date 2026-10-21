@@ -61,6 +61,9 @@ Escopo de revisão pelo risco do diff. Mudanças não triviais: revisão indepen
 
 ## Dependências e entrega
 
+- ESLint fica na 9.39.5 (tag `maintenance` do npm; o `npm install` mostra aviso de versão sem suporte). Motivo: `eslint-config-next@16.4.2` depende de `eslint-plugin-react`, `eslint-plugin-jsx-a11y` e `eslint-plugin-import`, que só aceitam ESLint até a 9. Revisitar quando uma versão estável do `eslint-config-next` aceitar ESLint 10.
+- O npm do Windows avisa que `core-js` (mensagem de agradecimento) e `unrs-resolver` (checagem do binário nativo) têm scripts de instalação não aprovados. Não são necessários se `npm run check` passar.
+
 - Auditoria de produção (`npm audit --omit=dev`) em 21/10/2026: **0 vulnerabilidades**.
 - Auditoria completa: 5 alertas *high* em `braces` (via `eslint-config-next` › `@next/eslint-plugin-next` › `fast-glob` › `micromatch`), só em ferramenta de desenvolvimento e sem versão corrigida publicada. Risco: negação de serviço local no lint com padrões maliciosos; não chega à aplicação. Revisitar quando sair correção (`npm audit`).
 - Sem hooks de Git, bloqueios de push ou exigência de branch. Atualize este documento junto com scripts e regras.
