@@ -44,7 +44,7 @@ Documentação do projeto:
 
 ## Rodar no computador
 
-Requisitos: Node.js 20.9 ou mais novo e uma conta gratuita no [Supabase](https://supabase.com).
+Requisitos: Node.js 24 (LTS) e uma conta gratuita no [Supabase](https://supabase.com).
 
 1. **Criar o projeto no Supabase.** Em *SQL Editor*, cole e rode o arquivo [`supabase/schema.sql`](supabase/schema.sql). Ele cria as tabelas `perfis` e `analises`, o gatilho que cria o perfil no cadastro e as regras de segurança.
 2. **Configurar a autenticação.** Em *Authentication > URL Configuration*, coloque `http://localhost:3002` em *Site URL* e adicione `http://localhost:3002/auth/callback` em *Redirect URLs*. A confirmação de e-mail vem ligada por padrão; para testes locais dá para desligar em *Authentication > Providers > Email*.
