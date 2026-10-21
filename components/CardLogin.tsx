@@ -8,6 +8,9 @@ import LinksNeon from "@/components/LinksNeon";
 import type { TelaAcesso } from "@/lib/rotas";
 import { criarClienteNavegador } from "@/lib/supabase/client";
 
+/** Tempo da tela "Tudo certo!" antes de abrir o painel (a animação termina em ~1,6 s). */
+const PAUSA_SUCESSO_MS = 2800;
+
 /** Tela "Entrar" do modal de acesso. */
 export default function CardLogin({ erroInicial = "", aoFechar, aoTrocar }: { erroInicial?: string; aoFechar: () => void; aoTrocar: (t: TelaAcesso) => void }) {
   const router = useRouter();
@@ -29,8 +32,10 @@ export default function CardLogin({ erroInicial = "", aoFechar, aoTrocar }: { er
       setErro(error.message.includes("Email not confirmed") ? "Confirme seu e-mail pelo link que enviamos antes de entrar." : "E-mail ou senha incorretos.");
       return;
     }
-    // A tela de boas-vindas fica sobre o card até o painel abrir
+    // A tela de boas-vindas fica sobre o card até o painel abrir; segura um pouco depois do "Tudo certo!" antes de entrar
     setEstado("sucesso");
+    router.prefetch("/");
+    await new Promise((r) => setTimeout(r, PAUSA_SUCESSO_MS));
     router.replace("/");
     router.refresh();
   }
