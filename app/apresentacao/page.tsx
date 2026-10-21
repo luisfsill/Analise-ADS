@@ -47,7 +47,7 @@ export default function Apresentacao() {
             {SECOES.map(([href, rotulo]) => <a key={href} href={href} className="lnk">{rotulo}</a>)}
           </div>
           <div className="btns">
-            <BotaoTema />
+            <BotaoTema className="btn icone lp-ghost" />
             <Link href={ROTA_LOGIN} scroll={false} className="btn lp-ghost">Entrar</Link>
             <Link href="/cadastro" className="btn primary">Começar agora</Link>
           </div>

@@ -333,7 +333,7 @@ code{font-size:.85em;background:var(--soft);padding:1px 6px;border-radius:6px}
 .modal-login::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .modal-login[open]{animation:modal-entrar .3s var(--ease-out)}
 .modal-login[open]::backdrop{animation:fundo-entrar .3s ease}
-.modal-login .card{position:relative;width:100%;padding:36px 32px;background:var(--menu-bg);border-color:var(--glass-line);box-shadow:var(--shadow-lg);-webkit-backdrop-filter:saturate(180%) blur(32px);backdrop-filter:saturate(180%) blur(32px)}
+.modal-login .card{position:relative;width:100%;padding:36px 32px;background:radial-gradient(520px 260px at 50% -12%,var(--accent-soft),transparent 72%),var(--bg);border-color:var(--glass-line);box-shadow:var(--shadow-lg);-webkit-backdrop-filter:saturate(180%) blur(32px);backdrop-filter:saturate(180%) blur(32px)}
 .fechar-modal{position:absolute;top:14px;right:14px;width:36px;min-height:36px;background:transparent;border-color:transparent}
 .fechar-modal:hover{background:color-mix(in srgb,var(--ink) 8%,transparent)}
 html:has(.modal-login[open]){overflow:hidden}
