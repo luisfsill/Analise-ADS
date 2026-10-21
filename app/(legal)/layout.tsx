@@ -24,9 +24,14 @@ export default function LayoutLegal({ children }: { children: React.ReactNode })
         <div className="lp-rodape-in">
           <span className="marca-rodape"><span className="logo"><BarChart3 /></span>Análise ADS</span>
           <nav className="lp-rodape-links" aria-label="Rodapé">
-            <Link href="/">Início</Link>
-            <Link href="/termos">Termos de Uso</Link>
-            <Link href="/privacidade">Política de Privacidade</Link>
+            <div className="lp-rodape-grupo">
+              <Link href="/">Início</Link>
+            </div>
+            <span className="lp-rodape-divisoria" aria-hidden="true" />
+            <div className="lp-rodape-grupo">
+              <Link href="/termos">Termos de Uso</Link>
+              <Link href="/privacidade">Política de Privacidade</Link>
+            </div>
           </nav>
           <span className="lp-rodape-fim">© {new Date().getFullYear()} Análise ADS</span>
         </div>
