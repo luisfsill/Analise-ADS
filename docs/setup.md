@@ -37,11 +37,11 @@
 | Subagentes em ondas | Regra copiada para `docs/rules/parallel-subagent-driven-development.md` e referenciada no AGENTS.md | Projeto | **Configurado** |
 | RTK | Só existe em escopo global para Claude Code | Usuário | **Pendente**: instalar no Windows |
 | Context7 | `.mcp.json` (HTTP, sem chave; limite compartilhado) | Projeto | **Aprovado** no Claude Code (`enabledMcpjsonServers` em `.claude/settings.local.json`); consulta real ainda não feita |
-| Graphify | `.graphifyignore` + `graphify-out/` no `.gitignore`; CLI global | Projeto + usuário | **Pendente**: instalar CLI e gerar o grafo |
+| Graphify | `.graphifyignore` + `graphify-out/` no `.gitignore`; CLI global via pipx | Projeto + usuário | **Validado** (21/10/2026): graphifyy 0.9.93; `extract --code-only` gerou 260 nós e 520 arestas de 47 arquivos. `supabase/schema.sql` fica de fora até instalar o extra SQL (`pipx install --force "graphifyy[sql]"`). Regenerar após mudanças estruturais |
 | Obsidian | Não adotado: sem necessidade concreta; memória nativa basta | — | Inaplicável |
 | Memória | CLAUDE.md → AGENTS.md → docs versionados; memória automática do Claude Code como complemento | Projeto | **Configurado** |
 | Hooks | Nenhum hook próprio; proteção do `.env` por `permissions.deny` (vale para Read/Edit e comandos de arquivo do Bash, não para scripts que abrem o arquivo sozinhos). Hooks do RTK e do security-guidance vêm das próprias ferramentas | Projeto | **Configurado**: `.claude/settings.json` ativo; regras deny carregadas com os plugins |
-| agent-browser | Pré-requisito do `next-dev-loop` | Usuário | **Pendente**: 0.27.0 instalada com Chrome 156; o `next-dev-loop` exige ≥ 0.31.1 (`npm i -g agent-browser@0.39.1 --allow-scripts=agent-browser`) |
+| agent-browser | Pré-requisito do `next-dev-loop` | Usuário | **Instalado com ressalva**: 0.39.1 + Chrome 156. Todas as versões ≥ 0.31.1 exigem Node ≥ 24; a máquina está no Node 22.18 (aviso EBADENGINE). Atualizar o Node para 24 LTS se o `next-dev-loop` falhar |
 | Chrome DevTools MCP | `.mcp.json` com `--isolated` (perfil temporário, sem sessões pessoais) e `--no-usage-statistics` | Projeto | **Aprovado** no Claude Code; uso real ainda não feito |
 | Anthropic skills (skill-creator, document-skills) | Não instaladas: sem necessidade no projeto; o Claude Code já cria skills | — | Inaplicável |
 | Codex | Não usado | — | Inaplicável |
