@@ -21,6 +21,18 @@ Recursos de SaaS:
 
 Regras de negócio: [`docs/REGRAS.md`](docs/REGRAS.md). Decisões e próximos passos (cobrança automática etc.): [`docs/DECISOES.md`](docs/DECISOES.md).
 
+Documentação do projeto:
+
+| Documento | Conteúdo |
+|---|---|
+| [`PRODUCT.md`](PRODUCT.md) | produto, escopo, critérios de aceite, decisões pendentes |
+| [`AGENTS.md`](AGENTS.md) / [`CLAUDE.md`](CLAUDE.md) | instruções para agentes de IA (comandos, restrições, skills) |
+| [`docs/architecture.md`](docs/architecture.md) | mapa do código, fronteiras, dados e decisões técnicas |
+| [`docs/design.md`](docs/design.md) | sistema visual e acessibilidade |
+| [`docs/onboarding.md`](docs/onboarding.md) | preparar e rodar localmente |
+| [`docs/quality.md`](docs/quality.md) | checks, lint, testes e revisão de segurança |
+| [`docs/setup.md`](docs/setup.md) | ferramentas de IA instaladas, evidências e pendências |
+
 ## Stack
 
 | Parte | Tecnologia |
@@ -50,11 +62,14 @@ Requisitos: Node.js 20.9 ou mais novo e uma conta gratuita no [Supabase](https:/
 ## Comandos
 
 ```bash
-npm run dev     # ambiente de desenvolvimento
-npm run build   # build de produção
-npm start       # servir o build
-npm test        # testes das regras de negócio (tests/analise.test.ts)
-npm run typecheck  # checagem de tipos
+npm run dev         # desenvolvimento em http://localhost:3002
+npm run check       # lint + tipos + regras de lint + testes + build
+npm run lint        # ESLint (presets do Next + limite de 350 linhas)
+npm run lint:typed  # lint com tipos (promises), separado por ser mais lento
+npm run typecheck   # checagem de tipos
+npm test            # testes das regras de negócio (tests/analise.test.ts)
+npm run build       # build de produção
+npm start           # servir o build
 ```
 
 ## Publicar
