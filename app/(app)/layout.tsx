@@ -26,10 +26,8 @@ export default async function AreaLogada({ children }: { children: React.ReactNo
       )}
       <nav className="nav">
         <div className="in">
-          <div className="esq">
-            <Link href="/" className="marca"><span className="logo"><BarChart3 /></span><span className="marca-txt">Análise de anúncios</span></Link>
-            <NavLinks />
-          </div>
+          <Link href="/" className="marca"><span className="logo"><BarChart3 /></span><span className="marca-txt">Análise ADS</span></Link>
+          <NavLinks />
           <MenuUsuario nome={perfil?.nome || user.email || "Usuário"} email={user.email ?? ""} admin={admin} />
         </div>
       </nav>
