@@ -1,3 +1,4 @@
+import { BarChart3, ChevronDown, ChevronLeft, ChevronRight, Copy, FileDown, House, Lock, Maximize2, Minus, PanelLeft, Plus, RotateCw, Save, Share, X } from "lucide-react";
 import Anel, { statusCor } from "@/components/Anel";
 import { ENTRADAS_VAZIAS, analisar, indicadores } from "@/lib/analise/analise";
 import { brl, dec, int } from "@/lib/analise/formato";
@@ -22,8 +23,31 @@ export default function PreviaAnalise() {
 
   return (
     <div className="lp-janela" role="img" aria-label={`Exemplo do painel: nota ${a.score} de 100, gargalo em ${a.gargalo?.toLowerCase()} e seis indicadores com meta`}>
-      <div className="lp-janela-barra" aria-hidden="true"><span /><span /><span /><b>Nova análise · exemplo</b></div>
+      {/* Barra do navegador no estilo Safari/macOS */}
+      <div className="sf-barra" aria-hidden="true">
+        <div className="sf-semaforo">
+          <span className="sf-b sf-fechar"><X /></span>
+          <span className="sf-b sf-min"><Minus /></span>
+          <span className="sf-b sf-max"><Maximize2 /></span>
+        </div>
+        <div className="sf-ferramentas"><PanelLeft /><ChevronLeft /><ChevronRight className="sf-off" /></div>
+        <div className="sf-url"><Lock className="sf-cadeado" /><span>analiseads.app</span><RotateCw className="sf-recarregar" /></div>
+        <div className="sf-ferramentas sf-dir"><Share /><Plus /><Copy /></div>
+      </div>
+      {/* Página logada: mesma barra e cabeçalho do app */}
+      <div className="sf-app-nav" aria-hidden="true">
+        <span className="sf-marca"><span className="logo"><BarChart3 /></span>Análise ADS</span>
+        <span className="sf-inicio"><House />Início</span>
+        <span className="sf-usuario"><span className="avatar">MC</span><span className="sf-nome">Marina Costa</span><ChevronDown /></span>
+      </div>
       <div className="lp-janela-corpo" aria-hidden="true">
+        <div className="sf-topo">
+          <div>
+            <h4>Nova análise</h4>
+            <p>Preencha os números do período no Mercado Livre Ads. O diagnóstico se atualiza na hora.</p>
+          </div>
+          <div className="sf-btns"><span className="btn primary"><Save />Salvar análise</span><span className="btn"><FileDown />Baixar PDF</span></div>
+        </div>
         <div className="inputs">
           {campos.map(([rotulo, unidade, valor]) => (
             <div className="f" key={rotulo}>
