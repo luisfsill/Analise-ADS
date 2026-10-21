@@ -20,6 +20,7 @@ Não há ORM nem servidor próprio: o acesso a dados é feito pelo cliente Supab
 app/
   layout.tsx                    HTML raiz, fontes, metadados
   globals.css                   todos os estilos e tokens
+  apresentacao/                 página pública de vendas (page.tsx + landing.css, escopo .lp); servida em "/" para visitantes
   login, cadastro, recuperar-senha, redefinir-senha   telas públicas (client components)
   assinatura/page.tsx           teste/plano vencido ou conta inativa
   auth/callback/route.ts        links de e-mail (token_hash ou code), redirect seguro
@@ -31,6 +32,8 @@ app/
   (app)/admin/usuario/[id]      análises de um cliente (suporte)
 components/
   Analisador.tsx                painel inteiro (entrada, nota, indicadores, funil, plano, salvar/PDF)
+  Anel.tsx                      anel de progresso dos indicadores (painel e prévia)
+  PreviaAnalise.tsx             prévia estática do painel na apresentação (exemplo calculado pelas regras reais)
   BotaoSair.tsx
 lib/
   analise/                      regras de negócio puras (regras.ts = parâmetros; analise.ts = cálculo)
@@ -48,7 +51,7 @@ eslint-rules/, eslint*.mjs      quality gates (ver docs/quality.md)
 
 ## Fronteiras e fluxo
 
-1. `proxy.ts` roda antes de cada página: renova a sessão Supabase e manda para `/login` quem não está logado (rotas públicas: login, cadastro, recuperar-senha, auth).
+1. `proxy.ts` roda antes de cada página: renova a sessão Supabase e manda quem não está logado para `/?entrar=1`, a apresentação com o modal de login aberto (rotas públicas: cadastro, recuperar-senha, auth, apresentacao). Não existe página `/login`: o login é o modal `components/ModalLogin.tsx` com o card `components/CardLogin.tsx`. Visitante em `/` recebe a apresentação por rewrite (a URL continua `/`); logado em `/` vê o histórico.
 2. `app/(app)/layout.tsx` (servidor) busca o perfil e redireciona para `/assinatura` sem acesso válido.
 3. Páginas de servidor leem dados com `criarClienteServidor()`; componentes de cliente gravam com `criarClienteNavegador()`. Ambos agem **como o usuário** e passam pela RLS.
 4. Só as server actions de `app/(app)/admin/actions.ts` usam `criarClienteServico()`, depois de `exigirAdmin()`.

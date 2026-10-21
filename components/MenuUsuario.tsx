@@ -67,7 +67,7 @@ export default function MenuUsuario({ nome, email, admin }: { nome: string; emai
   async function sair() {
     setSaindo(true);
     await criarClienteNavegador().auth.signOut();
-    router.replace("/login");
+    router.replace("/");
     router.refresh();
   }
 

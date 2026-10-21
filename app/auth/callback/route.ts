@@ -34,5 +34,5 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) return NextResponse.redirect(`${origin}${proximo}`);
   }
-  return NextResponse.redirect(`${origin}/login?erro=link`);
+  return NextResponse.redirect(`${origin}/?entrar=1&erro=link`);
 }

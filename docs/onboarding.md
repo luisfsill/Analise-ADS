@@ -68,4 +68,4 @@ Ao abrir a pasta no Claude Code pela primeira vez: confie na pasta, aceite insta
 - **Build fecha com `Next.js build worker exited with code: 3221226505` na etapa "Collecting page data"**: causa verificada em 21/10/2026, troca de versão do Node (22 → 24) com `node_modules` instalado na versão antiga. Solução: `Remove-Item -Recurse -Force node_modules`, `npm install` e `npm run build`. Sempre reinstale as dependências depois de trocar a versão do Node.
 
 - **`npm install` muito lento ou travado ao copiar `node_modules` por outra máquina/VM**: causa verificada em 20/10/2026, cópia de ~17 mil arquivos pela ponte de pastas. Solução: rodar `npm install` direto no Windows.
-- **Link do e-mail cai em `/login?erro=link`**: o link expirou, já foi usado, ou foi aberto em outro navegador com o modelo de e-mail padrão (PKCE). Solução: usar os modelos com `token_hash` descritos em `docs/DEPLOY.md`.
+- **Link do e-mail abre o modal de login com "O link expirou ou já foi usado"** (`/?entrar=1&erro=link`): o link expirou, já foi usado, ou foi aberto em outro navegador com o modelo de e-mail padrão (PKCE). Solução: usar os modelos com `token_hash` descritos em `docs/DEPLOY.md`.

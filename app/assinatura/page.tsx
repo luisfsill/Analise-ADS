@@ -1,6 +1,7 @@
 import { ArrowLeft, CreditCard, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ROTA_LOGIN } from "@/lib/rotas";
 import BotaoSair from "@/components/BotaoSair";
 import BotaoTema from "@/components/BotaoTema";
 import { diasRestantes, temAcesso, usuarioAtual } from "@/lib/acesso";
@@ -13,7 +14,7 @@ const fmt = (d: string) => new Date(d).toLocaleDateString("pt-BR", { timeZone: "
 /** Tela de assinatura: aparece quando o teste ou o plano venceu, ou quando a conta ainda não foi liberada. */
 export default async function AssinaturaPage() {
   const { user, perfil } = await usuarioAtual();
-  if (!user) redirect("/login");
+  if (!user) redirect(ROTA_LOGIN);
   const liberado = temAcesso(perfil);
   const dias = perfil?.acesso_ate ? diasRestantes(perfil.acesso_ate) : null;
 

@@ -1,6 +1,7 @@
 import { ArrowRight, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ROTA_LOGIN } from "@/lib/rotas";
 import MenuUsuario from "@/components/MenuUsuario";
 import NavLinks from "@/components/NavLinks";
 import { diasRestantes, temAcesso, usuarioAtual } from "@/lib/acesso";
@@ -10,7 +11,7 @@ export const dynamic = "force-dynamic";
 /** Área logada: só entra quem tem login E assinatura/teste válido. */
 export default async function AreaLogada({ children }: { children: React.ReactNode }) {
   const { user, perfil } = await usuarioAtual();
-  if (!user) redirect("/login");
+  if (!user) redirect(ROTA_LOGIN);
   if (!temAcesso(perfil)) redirect("/assinatura");
 
   const admin = perfil?.papel === "admin";

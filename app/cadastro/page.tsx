@@ -1,6 +1,7 @@
 "use client";
 import { CircleAlert, CircleCheck, UserPlus } from "lucide-react";
 import Link from "next/link";
+import { ROTA_LOGIN } from "@/lib/rotas";
 import { useState } from "react";
 import BotaoTema from "@/components/BotaoTema";
 import { criarClienteNavegador } from "@/lib/supabase/client";
@@ -37,7 +38,7 @@ export default function CadastroPage() {
         {ok ? (
           <>
             <p className="msg-ok" role="status"><CircleCheck />Conta criada. Enviamos um link de confirmação para {email}.</p>
-            <div className="links"><Link href="/login">Ir para o login</Link></div>
+            <div className="links"><Link href={ROTA_LOGIN}>Ir para o login</Link></div>
           </>
         ) : (
           <>
@@ -49,7 +50,7 @@ export default function CadastroPage() {
               {erro && <p className="msg-erro" role="alert"><CircleAlert />{erro}</p>}
               <button className="btn primary" disabled={carregando} aria-busy={carregando}><UserPlus />{carregando ? "Criando…" : "Criar conta"}</button>
             </form>
-            <div className="links"><Link href="/login">Já tenho conta</Link></div>
+            <div className="links"><Link href={ROTA_LOGIN}>Já tenho conta</Link></div>
           </>
         )}
       </div>

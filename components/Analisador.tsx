@@ -2,6 +2,7 @@
 import { ArrowRight, Check, ChevronDown, Copy, Download, Plus, RotateCcw, Save, Table2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
+import Anel, { statusCor } from "@/components/Anel";
 import { analisar, chavePasso, indicadores, planoDeAcao } from "@/lib/analise/analise";
 import { brl, dec, int, num } from "@/lib/analise/formato";
 import { LABEL, PRIO, TIERS } from "@/lib/analise/regras";
@@ -30,21 +31,6 @@ const CAMPOS: { id: keyof CamposTexto; label: string; ph: string; antes?: string
   { id: "roas", label: "ROAS", ph: "10", depois: "×", modo: "decimal" },
   { id: "tacos", label: "TACOS", ph: "5", depois: "%", modo: "decimal" },
 ];
-
-const statusCor = (s: Status) => (s === "none" ? "muted" : s);
-
-function Anel({ pct, status }: { pct: number | null; status: Status }) {
-  const C = 2 * Math.PI * 40;
-  return (
-    <svg viewBox="0 0 100 100" aria-hidden="true">
-      <circle cx="50" cy="50" r="40" fill="none" stroke="var(--soft)" strokeWidth="10" />
-      {pct != null && (
-        <circle cx="50" cy="50" r="40" fill="none" stroke={`var(--${statusCor(status)})`} strokeWidth="10" strokeLinecap="round"
-          strokeDasharray={`${Math.max(0.02, Math.min(1, pct)) * C} ${C}`} transform="rotate(-90 50 50)" />
-      )}
-    </svg>
-  );
-}
 
 function textoParaCopiar(a: Resultado, acoes: Acao[], campanha: string) {
   const d = a.d;

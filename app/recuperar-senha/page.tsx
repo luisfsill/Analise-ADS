@@ -1,6 +1,7 @@
 "use client";
 import { CircleAlert, CircleCheck, KeyRound, Send } from "lucide-react";
 import Link from "next/link";
+import { ROTA_LOGIN } from "@/lib/rotas";
 import { useState } from "react";
 import BotaoTema from "@/components/BotaoTema";
 import { criarClienteNavegador } from "@/lib/supabase/client";
@@ -37,7 +38,7 @@ export default function RecuperarSenhaPage() {
             </form>
           </>
         )}
-        <div className="links"><Link href="/login">Voltar ao login</Link></div>
+        <div className="links"><Link href={ROTA_LOGIN}>Voltar ao login</Link></div>
       </div>
     </main>
   );

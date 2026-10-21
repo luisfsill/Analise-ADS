@@ -2,11 +2,12 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Rotas que não exigem login
-const ROTAS_PUBLICAS = ["/login", "/cadastro", "/recuperar-senha", "/auth"];
+const ROTAS_PUBLICAS = ["/cadastro", "/recuperar-senha", "/auth", "/apresentacao"];
 
 /**
  * Roda antes de cada página (no Next 16 o antigo middleware.ts se chama proxy.ts).
- * Renova a sessão do Supabase e manda para /login quem não está logado.
+ * Renova a sessão do Supabase e manda quem não está logado para a apresentação com o modal de login aberto (/?entrar=1).
+ * Visitante em "/" vê a apresentação pública (mesma URL); logado vê o histórico.
  * A checagem de assinatura fica em app/(app)/layout.tsx e, de forma definitiva, no banco (RLS).
  */
 export async function proxy(request: NextRequest) {
@@ -34,17 +35,25 @@ export async function proxy(request: NextRequest) {
   const caminho = request.nextUrl.pathname;
   const publica = ROTAS_PUBLICAS.some((r) => caminho === r || caminho.startsWith(r + "/"));
 
-  const redirecionar = (para: string) => {
+  const redirecionar = (para: string, reescrever = false) => {
     const destino = request.nextUrl.clone();
     destino.pathname = para;
-    destino.search = "";
-    const r = NextResponse.redirect(destino);
+    if (!reescrever) destino.search = "";
+    const r = reescrever ? NextResponse.rewrite(destino) : NextResponse.redirect(destino);
     response.cookies.getAll().forEach((c) => r.cookies.set(c));
     return r;
   };
 
-  if (!user && !publica) return redirecionar("/login");
-  if (user && (caminho === "/login" || caminho === "/cadastro")) return redirecionar("/");
+  if (!user && caminho === "/") return redirecionar("/apresentacao", true);
+  if (!user && !publica) {
+    const destino = request.nextUrl.clone();
+    destino.pathname = "/";
+    destino.search = "?entrar=1";
+    const r = NextResponse.redirect(destino);
+    response.cookies.getAll().forEach((c) => r.cookies.set(c));
+    return r;
+  }
+  if (user && caminho === "/cadastro") return redirecionar("/");
   return response;
 }
 
