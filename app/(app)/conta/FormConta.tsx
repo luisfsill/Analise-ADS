@@ -1,4 +1,5 @@
 "use client";
+import { CircleAlert, CircleCheck, KeyRound, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { criarClienteNavegador } from "@/lib/supabase/client";
@@ -34,8 +35,8 @@ export default function FormConta({ nomeInicial, userId }: { nomeInicial: string
         <div className="card-h"><h2>Dados</h2></div>
         <form className="form-col" onSubmit={salvarNome}>
           <div className="f"><label htmlFor="nome">Nome</label><div className="box"><input id="nome" maxLength={120} value={nome} onChange={(e) => setNome(e.target.value)} /></div></div>
-          {msgNome && <p className={msgNome.ok ? "msg-ok" : "msg-erro"} role="status">{msgNome.t}</p>}
-          <div><button className="btn primary">Salvar nome</button></div>
+          {msgNome && <p className={msgNome.ok ? "msg-ok" : "msg-erro"} role="status">{msgNome.ok ? <CircleCheck /> : <CircleAlert />}{msgNome.t}</p>}
+          <div><button className="btn primary"><Save />Salvar nome</button></div>
         </form>
       </section>
       <section className="card">
@@ -43,8 +44,8 @@ export default function FormConta({ nomeInicial, userId }: { nomeInicial: string
         <form className="form-col" onSubmit={trocarSenha}>
           <div className="f"><label htmlFor="s1">Nova senha</label><div className="box"><input id="s1" type="password" autoComplete="new-password" value={senha} onChange={(e) => setSenha(e.target.value)} /></div></div>
           <div className="f"><label htmlFor="s2">Repita a nova senha</label><div className="box"><input id="s2" type="password" autoComplete="new-password" value={senha2} onChange={(e) => setSenha2(e.target.value)} /></div></div>
-          {msgSenha && <p className={msgSenha.ok ? "msg-ok" : "msg-erro"} role="status">{msgSenha.t}</p>}
-          <div><button className="btn primary">Trocar senha</button></div>
+          {msgSenha && <p className={msgSenha.ok ? "msg-ok" : "msg-erro"} role="status">{msgSenha.ok ? <CircleCheck /> : <CircleAlert />}{msgSenha.t}</p>}
+          <div><button className="btn primary"><KeyRound />Trocar senha</button></div>
         </form>
       </section>
     </>

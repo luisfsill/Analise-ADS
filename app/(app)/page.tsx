@@ -1,3 +1,4 @@
+import { ChevronRight, ClipboardList, Plus } from "lucide-react";
 import Link from "next/link";
 import { usuarioAtual } from "@/lib/acesso";
 
@@ -27,8 +28,9 @@ export default async function Historico() {
         {error && <p className="msg-erro">Não foi possível carregar as análises. Recarregue a página.</p>}
         {!error && !analises?.length && (
           <div className="vazio">
+            <span className="vazio-ico"><ClipboardList /></span>
             <p>Você ainda não salvou nenhuma análise.</p>
-            <Link href="/analise/nova" className="btn primary">Fazer a primeira análise</Link>
+            <Link href="/analise/nova" className="btn primary"><Plus />Fazer a primeira análise</Link>
           </div>
         )}
         <div className="lista">
@@ -42,6 +44,7 @@ export default async function Historico() {
                 </span>
               </span>
               <span className="m">{new Date(a.atualizado_em).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}</span>
+              <ChevronRight className="chev" />
             </Link>
           ))}
         </div>

@@ -1,6 +1,8 @@
+import { ArrowRight, BarChart3, Plus, Shield, UserRound } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import BotaoSair from "@/components/BotaoSair";
+import BotaoTema from "@/components/BotaoTema";
 import { diasRestantes, temAcesso, usuarioAtual } from "@/lib/acesso";
 
 export const dynamic = "force-dynamic";
@@ -19,16 +21,17 @@ export default async function AreaLogada({ children }: { children: React.ReactNo
       {dias != null && (
         <div className="faixa-teste" role="status">
           Teste grátis: {dias === 0 ? "termina hoje" : dias === 1 ? "falta 1 dia" : `faltam ${dias} dias`}.{" "}
-          <Link href="/assinatura">Assinar agora</Link>
+          <Link href="/assinatura">Assinar agora <ArrowRight /></Link>
         </div>
       )}
       <nav className="nav">
         <div className="in">
-          <Link href="/" className="marca">Análise de anúncios</Link>
+          <Link href="/" className="marca"><span className="logo"><BarChart3 /></span>Análise de anúncios</Link>
           <div className="dir">
-            {admin && <Link href="/admin" className="lnk">Admin</Link>}
-            <Link href="/conta" className="lnk" title={user.email ?? ""}>{perfil?.nome || user.email}</Link>
-            <Link href="/analise/nova" className="btn primary">Nova análise</Link>
+            {admin && <Link href="/admin" className="lnk"><Shield /><span>Admin</span></Link>}
+            <Link href="/conta" className="lnk" title={user.email ?? ""}><UserRound /><span>{perfil?.nome || user.email}</span></Link>
+            <BotaoTema />
+            <Link href="/analise/nova" className="btn primary"><Plus /><span className="rot">Nova análise</span></Link>
             <BotaoSair />
           </div>
         </div>

@@ -1,6 +1,8 @@
 "use client";
+import { CircleAlert, CircleCheck, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import BotaoTema from "@/components/BotaoTema";
 import { criarClienteNavegador } from "@/lib/supabase/client";
 
 export default function CadastroPage() {
@@ -28,11 +30,13 @@ export default function CadastroPage() {
 
   return (
     <main className="auth">
+      <BotaoTema className="btn icone tema-auth" />
       <div className="card">
+        <span className="marca-auth"><UserPlus /></span>
         <h1>Criar conta</h1>
         {ok ? (
           <>
-            <p className="msg-ok">Conta criada. Enviamos um link de confirmação para {email}.</p>
+            <p className="msg-ok" role="status"><CircleCheck />Conta criada. Enviamos um link de confirmação para {email}.</p>
             <div className="links"><Link href="/login">Ir para o login</Link></div>
           </>
         ) : (
@@ -42,8 +46,8 @@ export default function CadastroPage() {
               <div className="f"><label htmlFor="nome">Nome</label><div className="box"><input id="nome" autoComplete="name" required maxLength={120} value={nome} onChange={(e) => setNome(e.target.value)} /></div></div>
               <div className="f"><label htmlFor="email">E-mail</label><div className="box"><input id="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div></div>
               <div className="f"><label htmlFor="senha">Senha (mínimo 8 caracteres)</label><div className="box"><input id="senha" type="password" autoComplete="new-password" required value={senha} onChange={(e) => setSenha(e.target.value)} /></div></div>
-              {erro && <p className="msg-erro" role="alert">{erro}</p>}
-              <button className="btn primary" disabled={carregando}>{carregando ? "Criando…" : "Criar conta"}</button>
+              {erro && <p className="msg-erro" role="alert"><CircleAlert />{erro}</p>}
+              <button className="btn primary" disabled={carregando} aria-busy={carregando}><UserPlus />{carregando ? "Criando…" : "Criar conta"}</button>
             </form>
             <div className="links"><Link href="/login">Já tenho conta</Link></div>
           </>

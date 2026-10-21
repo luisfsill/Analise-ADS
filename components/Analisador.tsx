@@ -1,4 +1,5 @@
 "use client";
+import { ArrowRight, Check, ChevronDown, Copy, Download, Plus, RotateCcw, Save, Table2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { analisar, chavePasso, indicadores, planoDeAcao } from "@/lib/analise/analise";
@@ -150,13 +151,13 @@ export default function Analisador({ registro, somenteLeitura = false }: { regis
           <p>Preencha os números do período no Mercado Livre Ads. O diagnóstico e o plano de ação se atualizam na hora.</p>
         </div>
         <div className="btns">
-          {aviso && <span className="salvo" role="status">{alterado ? "Alterações não salvas" : aviso}</span>}
+          {aviso && <span className="salvo" role="status">{!alterado && <Check />}{alterado ? "Alterações não salvas" : aviso}</span>}
           {somenteLeitura && <span className="salvo">Análise de um cliente (somente leitura)</span>}
-          {!somenteLeitura && <button type="button" className="btn primary" onClick={salvar} disabled={salvando}>{salvando ? "Salvando…" : id ? "Salvar alterações" : "Salvar análise"}</button>}
-          <button type="button" className="btn" onClick={baixarPdf}>Baixar PDF</button>
-          <button type="button" className="btn" onClick={copiar}>Copiar</button>
-          <button type="button" className={"btn" + (confirmar === "nova" ? " danger" : "")} onClick={novaAnalise}>{confirmar === "nova" ? "Descartar e começar nova" : "Nova análise"}</button>
-          {id && !somenteLeitura && <button type="button" className={"btn" + (confirmar === "excluir" ? " danger" : "")} onClick={excluir}>{confirmar === "excluir" ? "Confirmar exclusão" : "Excluir"}</button>}
+          {!somenteLeitura && <button type="button" className="btn primary" onClick={salvar} disabled={salvando} aria-busy={salvando}><Save />{salvando ? "Salvando…" : id ? "Salvar alterações" : "Salvar análise"}</button>}
+          <button type="button" className="btn" onClick={baixarPdf}><Download />Baixar PDF</button>
+          <button type="button" className="btn" onClick={copiar}><Copy />Copiar</button>
+          <button type="button" className={"btn" + (confirmar === "nova" ? " danger" : "")} onClick={novaAnalise}>{confirmar === "nova" ? <RotateCcw /> : <Plus />}{confirmar === "nova" ? "Descartar e começar nova" : "Nova análise"}</button>
+          {id && !somenteLeitura && <button type="button" className={"btn" + (confirmar === "excluir" ? " danger" : "")} onClick={excluir}><Trash2 />{confirmar === "excluir" ? "Confirmar exclusão" : "Excluir"}</button>}
         </div>
       </header>
 
@@ -177,7 +178,7 @@ export default function Analisador({ registro, somenteLeitura = false }: { regis
             ))}
           </div>
           <details className="more">
-            <summary>Mais detalhes (opcional): margem, envio e momento da conta</summary>
+            <summary><Plus />Mais detalhes (opcional): margem, envio e momento da conta</summary>
             <div className="inputs">
               <div className="f"><label htmlFor="margem">Margem de lucro</label><div className="box"><input id="margem" inputMode="decimal" placeholder="20" value={campos.margem} onChange={(e) => { setCampos({ ...campos, margem: e.target.value }); mudou(); }} /><span>%</span></div></div>
               <div className="f"><label htmlFor="envio">Modalidade de envio</label><div className="box"><select id="envio" value={envio} onChange={(e) => { setEnvio(e.target.value as Envio); mudou(); }}><option value="">Não informado</option><option value="full">Full</option><option value="correios">Correios / agência</option><option value="flex">Flex</option></select></div></div>
@@ -192,7 +193,7 @@ export default function Analisador({ registro, somenteLeitura = false }: { regis
           <svg className="score" viewBox="0 0 100 100" role="img" aria-label={"Nota " + (a.score ?? "sem dado")}>
             <circle cx="50" cy="50" r="42" fill="none" stroke="var(--soft)" strokeWidth="10" />
             <circle cx="50" cy="50" r="42" fill="none" stroke={`var(--${statusCor(s)})`} strokeWidth="10" strokeLinecap="round" strokeDasharray={`${((a.score ?? 0) / 100) * 264} 264`} transform="rotate(-90 50 50)" />
-            <text x="50" y="58" textAnchor="middle" fontSize="26" fontWeight="800" fill="var(--ink)" fontFamily="Bricolage Grotesque, Manrope, system-ui, sans-serif">{a.score ?? "–"}</text>
+            <text x="50" y="58" textAnchor="middle" fontSize="26" fontWeight="800" fill="var(--ink)" style={{ fontFamily: "var(--display)", letterSpacing: "-0.03em" }}>{a.score ?? "–"}</text>
           </svg>
           <div>
             <div className="eyebrow">Nota de 0 a 100</div>
@@ -241,7 +242,7 @@ export default function Analisador({ registro, somenteLeitura = false }: { regis
               </div>
             ) : (
               <div key={idx} className={"link " + (idx === 1 ? a.st.ctr : a.st.conv)}>
-                <div className="arrow">→</div>
+                <div className="arrow"><ArrowRight /></div>
                 <div className="r num">{fmtElo(idx === 1 ? a.ipc : a.cpvd)}</div>
                 <div className="rl">{idx === 1 ? "impressões por clique" : "cliques por venda"}</div>
               </div>
@@ -281,7 +282,7 @@ export default function Analisador({ registro, somenteLeitura = false }: { regis
                 <summary>
                   <span className="stripe" />
                   <div><span className={"chip " + ps}>{pl}</span><h3>{x.t}</h3></div>
-                  <div className="meta"><span className="progress">{n}/{todos.length} feitos</span><span className="caret">▾</span></div>
+                  <div className="meta"><span className="progress">{n}/{todos.length} feitos</span><span className="caret"><ChevronDown /></span></div>
                 </summary>
                 <div className="body">
                   <p className="why">{x.w}</p>
@@ -295,7 +296,7 @@ export default function Analisador({ registro, somenteLeitura = false }: { regis
       </section>
 
       <details className="card refs">
-        <summary><span>Tabelas de referência</span><span className="caret" aria-hidden="true">▾</span></summary>
+        <summary><span><Table2 />Tabelas de referência</span><span className="caret"><ChevronDown /></span></summary>
         <div className="refgrid">
           <div className="tablewrap">
             <table><thead><tr><th>Impressões por clique</th><th>CTR</th><th>Classificação</th><th>Ação</th></tr></thead>

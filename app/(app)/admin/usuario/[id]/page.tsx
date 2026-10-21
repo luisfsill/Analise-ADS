@@ -1,3 +1,4 @@
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { usuarioAtual } from "@/lib/acesso";
@@ -30,7 +31,7 @@ export default async function AnalisesDoCliente({ params }: { params: Promise<{ 
             <Link key={a.id} href={"/analise/" + a.id} className="item">
               <span className={"nota " + (a.nota == null ? "none" : a.nota >= 75 ? "good" : a.nota >= 50 ? "warn" : "bad")}>{a.nota ?? "–"}</span>
               <span><span className="t">{a.campanha || "Análise sem nome"}</span><span className="m" style={{ display: "block" }}>{a.gargalo ? "Gargalo: " + a.gargalo.toLowerCase() : "Funil sem gargalo"}</span></span>
-              <span className="m">{new Date(a.atualizado_em).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}</span>
+              <span className="m">{new Date(a.atualizado_em).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}</span><ChevronRight className="chev" />
             </Link>
           ))}
           {!analises?.length && <p className="m">Este cliente ainda não salvou análises.</p>}

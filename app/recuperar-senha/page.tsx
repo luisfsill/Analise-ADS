@@ -1,6 +1,8 @@
 "use client";
+import { CircleAlert, CircleCheck, KeyRound, Send } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import BotaoTema from "@/components/BotaoTema";
 import { criarClienteNavegador } from "@/lib/supabase/client";
 
 export default function RecuperarSenhaPage() {
@@ -19,17 +21,19 @@ export default function RecuperarSenhaPage() {
 
   return (
     <main className="auth">
+      <BotaoTema className="btn icone tema-auth" />
       <div className="card">
+        <span className="marca-auth"><KeyRound /></span>
         <h1>Recuperar senha</h1>
         {enviado ? (
-          <p className="msg-ok">Se existir uma conta com {email}, você vai receber um link para criar uma nova senha.</p>
+          <p className="msg-ok" role="status"><CircleCheck />Se existir uma conta com {email}, você vai receber um link para criar uma nova senha.</p>
         ) : (
           <>
             <p className="sub">Digite seu e-mail para receber o link.</p>
             <form onSubmit={enviar}>
               <div className="f"><label htmlFor="email">E-mail</label><div className="box"><input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div></div>
-              {erro && <p className="msg-erro" role="alert">{erro}</p>}
-              <button className="btn primary">Enviar link</button>
+              {erro && <p className="msg-erro" role="alert"><CircleAlert />{erro}</p>}
+              <button className="btn primary"><Send />Enviar link</button>
             </form>
           </>
         )}

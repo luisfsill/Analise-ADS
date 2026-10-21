@@ -1,6 +1,8 @@
+import { ArrowLeft, CreditCard, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import BotaoSair from "@/components/BotaoSair";
+import BotaoTema from "@/components/BotaoTema";
 import { diasRestantes, temAcesso, usuarioAtual } from "@/lib/acesso";
 import { LINK_ASSINATURA } from "@/lib/env";
 
@@ -33,17 +35,19 @@ export default async function AssinaturaPage() {
 
   return (
     <main className="auth">
+      <BotaoTema className="btn icone tema-auth" />
       <div className="card">
+        <span className="marca-auth"><CreditCard /></span>
         <h1>{titulo}</h1>
         <p className="sub">{texto}</p>
         <div className="pilha">
           {LINK_ASSINATURA && (liberado ? perfil?.status === "teste" : true) && (
             <a className="btn primary" href={LINK_ASSINATURA} target="_blank" rel="noopener noreferrer">
-              {liberado ? "Assinar agora" : "Assinar / renovar"}
+              {liberado ? "Assinar agora" : "Assinar / renovar"}<ExternalLink />
             </a>
           )}
           {!LINK_ASSINATURA && !liberado && <p className="sub">Entre em contato com o suporte para liberar seu acesso.</p>}
-          {liberado && <Link className="btn" href="/">Voltar para o sistema</Link>}
+          {liberado && <Link className="btn" href="/"><ArrowLeft />Voltar para o sistema</Link>}
         </div>
         <div className="links">
           <span className="m">{user.email}</span>

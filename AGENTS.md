@@ -78,3 +78,13 @@ Instalar skills não executa suas ações. Não forçar animações, cache, depl
 - Sem hooks de Git, bloqueios de push ou exigência de branch. Checks são comandos explícitos.
 - Delegar só quando isolamento de contexto, especialização ou paralelismo real justificarem. Protocolo de ondas paralelas: `docs/rules/parallel-subagent-driven-development.md`. Um escritor por arquivo; o coordenador cuida de lockfile, configuração compartilhada e integração; revisores são somente leitura.
 - Revisão proporcional ao risco do diff; revisão independente em mudanças não triviais (plugins `code-review` / `pr-review-toolkit`). Terminar quando os achados relevantes estiverem resolvidos e os checks passarem.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

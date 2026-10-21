@@ -14,3 +14,7 @@ graphify-out/
 
 # Claude Code (configuração pessoal da máquina)
 .claude/settings.local.json
+
+# Python
+__pycache__/
+*.pyc

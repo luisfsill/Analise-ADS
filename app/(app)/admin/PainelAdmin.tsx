@@ -1,4 +1,5 @@
 "use client";
+import { Ban, CalendarPlus, ChevronDown, CircleAlert, CircleCheck, Pencil, Save, Search, Trash2, UserPlus, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
@@ -78,7 +79,7 @@ export default function PainelAdmin({ usuarios, meuId, podeCriar }: { usuarios: 
         <div className="card-h">
           <h2>Usuários</h2>
           <div className="filtros">
-            <div className="box"><input aria-label="Buscar" placeholder="Buscar por nome, e-mail ou anotação" value={busca} onChange={(e) => setBusca(e.target.value)} /></div>
+            <div className="box"><Search /><input aria-label="Buscar" placeholder="Buscar por nome, e-mail ou anotação" value={busca} onChange={(e) => setBusca(e.target.value)} /></div>
             <div className="box">
               <select aria-label="Filtrar" value={filtro} onChange={(e) => setFiltro(e.target.value as typeof filtro)}>
                 <option value="todos">Todos</option><option>Ativo</option><option>Teste</option><option>Vencido</option><option>Bloqueado</option>
@@ -86,7 +87,7 @@ export default function PainelAdmin({ usuarios, meuId, podeCriar }: { usuarios: 
             </div>
           </div>
         </div>
-        {aviso && <p className={aviso.ok ? "msg-ok" : "msg-erro"} role="status" style={{ marginBottom: 10 }}>{aviso.t}</p>}
+        {aviso && <p className={aviso.ok ? "msg-ok" : "msg-erro"} role="status" style={{ marginBottom: 12 }}>{aviso.ok ? <CircleCheck /> : <CircleAlert />}{aviso.t}</p>}
         <div className="tablewrap">
           <table className="tabela-admin">
             <thead><tr><th>Cliente</th><th>Situação</th><th>Vence em</th><th>Análises</th><th>Último acesso</th><th></th></tr></thead>
@@ -140,9 +141,9 @@ function FragmentoLinha(props: {
         <td className="num">{data(u.ultimo_acesso)}</td>
         <td>
           <div className="acoes">
-            {u.papel !== "admin" && <button type="button" className="btn mini" disabled={props.pendente} onClick={props.mais30}>+30 dias</button>}
-            {u.papel !== "admin" && u.status !== "inativo" && <button type="button" className="btn mini" disabled={props.pendente} onClick={props.bloquear}>Bloquear</button>}
-            <button type="button" className="btn mini" onClick={props.abrir}>{aberto ? "Fechar" : "Editar"}</button>
+            {u.papel !== "admin" && <button type="button" className="btn mini" disabled={props.pendente} onClick={props.mais30}><CalendarPlus />+30 dias</button>}
+            {u.papel !== "admin" && u.status !== "inativo" && <button type="button" className="btn mini" disabled={props.pendente} onClick={props.bloquear}><Ban />Bloquear</button>}
+            <button type="button" className="btn mini" onClick={props.abrir}>{aberto ? <X /> : <Pencil />}{aberto ? "Fechar" : "Editar"}</button>
           </div>
         </td>
       </tr>
@@ -157,10 +158,10 @@ function FragmentoLinha(props: {
             </div>
             <div className="acoes" style={{ marginTop: 10 }}>
               <button type="button" className="btn primary mini" disabled={props.pendente}
-                onClick={() => props.salvar({ papel, status, observacao: obs, acesso_ate: vence ? new Date(vence + "T23:59:59-03:00").toISOString() : null })}>Salvar</button>
+                onClick={() => props.salvar({ papel, status, observacao: obs, acesso_ate: vence ? new Date(vence + "T23:59:59-03:00").toISOString() : null })}><Save />Salvar</button>
               {!eu && props.podeExcluir && (
                 <button type="button" className={"btn mini" + (confirmar ? " danger" : "")} disabled={props.pendente}
-                  onClick={() => (confirmar ? props.excluir() : setConfirmar(true))}>{confirmar ? "Confirmar: excluir conta e análises" : "Excluir conta"}</button>
+                  onClick={() => (confirmar ? props.excluir() : setConfirmar(true))}><Trash2 />{confirmar ? "Confirmar: excluir conta e análises" : "Excluir conta"}</button>
               )}
             </div>
           </td>
@@ -181,7 +182,7 @@ function NovoUsuario({ podeCriar, aoCriar }: { podeCriar: boolean; aoCriar: (r: 
   if (!podeCriar) {
     return (
       <details className="card refs">
-        <summary><span>Adicionar cliente</span><span className="caret" aria-hidden="true">▾</span></summary>
+        <summary><span><UserPlus />Adicionar cliente</span><span className="caret"><ChevronDown /></span></summary>
         <p className="m" style={{ marginTop: 10 }}>
           Para criar clientes por aqui, cadastre a variável <code>SUPABASE_SERVICE_ROLE_KEY</code> (Supabase › Project Settings › API Keys › chave secreta / service_role)
           nas Environment Variables da Vercel e faça um novo deploy. Enquanto isso, o cliente pode se cadastrar pela tela de cadastro e você libera o acesso na lista abaixo.
@@ -192,7 +193,7 @@ function NovoUsuario({ podeCriar, aoCriar }: { podeCriar: boolean; aoCriar: (r: 
 
   return (
     <details className="card refs">
-      <summary><span>Adicionar cliente</span><span className="caret" aria-hidden="true">▾</span></summary>
+      <summary><span><UserPlus />Adicionar cliente</span><span className="caret"><ChevronDown /></span></summary>
       <form className="grade-editor" style={{ marginTop: 12 }} onSubmit={(e) => {
         e.preventDefault();
         iniciar(async () => {
@@ -206,7 +207,7 @@ function NovoUsuario({ podeCriar, aoCriar }: { podeCriar: boolean; aoCriar: (r: 
         <div className="f"><label htmlFor="nu-senha">Senha provisória (vazio = enviar convite por e-mail)</label><div className="box"><input id="nu-senha" type="text" autoComplete="off" value={senha} onChange={(e) => setSenha(e.target.value)} /></div></div>
         <div className="f"><label htmlFor="nu-dias">Dias de acesso (0 = sem vencimento)</label><div className="box"><input id="nu-dias" inputMode="numeric" value={dias} onChange={(e) => setDias(e.target.value.replace(/\D/g, ""))} /></div></div>
         <div className="f largo"><label htmlFor="nu-obs">Anotação interna</label><div className="box"><input id="nu-obs" maxLength={500} placeholder="Ex.: Plano mensal, pago via Pix em 20/10" value={obs} onChange={(e) => setObs(e.target.value)} /></div></div>
-        <div><button className="btn primary" disabled={pendente}>{pendente ? "Criando…" : "Criar cliente"}</button></div>
+        <div><button className="btn primary" disabled={pendente} aria-busy={pendente}><UserPlus />{pendente ? "Criando…" : "Criar cliente"}</button></div>
       </form>
     </details>
   );

@@ -2,15 +2,18 @@
 
 ## Direção
 
-Ferramenta de trabalho para vendedores do Mercado Livre: clara, direta e confiável, com números grandes e status por cor. Português do Brasil. Uso em desktop e celular (o vendedor costuma conferir pelo celular). Tom visual: limpo, cartões brancos sobre fundo azulado claro, um azul de destaque, verde/âmbar/vermelho para bom/atenção/crítico.
+Ferramenta de trabalho para vendedores do Mercado Livre: clara, direta e confiável, com números grandes e status por cor. Português do Brasil. Uso em desktop e celular (o vendedor costuma conferir pelo celular). Tom visual inspirado na linguagem da Apple: muito espaço, cartões brancos (claro) ou grafite `#1C1C1E` (escuro) sobre fundo `#F5F5F7`/preto, bordas finas translúcidas, sombras ambiente difusas, vidro jateado na navegação, um azul de destaque e verde/laranja/vermelho para bom/atenção/crítico.
 
 ## Sistema existente
 
 Fonte da verdade: `app/globals.css` (não duplicar valores aqui).
 
-- **Tokens** no topo do arquivo, em `:root`, com tema escuro automático (`prefers-color-scheme`) e forçado por `data-theme`: `--bg`, `--surface`, `--ink`, `--muted`, `--line`, `--soft`, `--accent`, `--accent-soft`, `--good`, `--warn`, `--bad`.
-- **Tipografia**: Bricolage Grotesque (títulos e números, `--display`) e Manrope (texto, `--body`), via Google Fonts em `app/layout.tsx`.
-- **Componentes de classe**: `.card`, `.btn` (`.primary`, `.danger`, `.mini`), `.f` + `.box` (campos), `.chip`/`.pill` (status com `--c`), `.gcard` + `.ringbox` (indicadores), `.stage` (funil), `.action` (plano), `.item` (listas), `.kpis`, `.tabela-admin`, `.auth` (telas de acesso).
+- **Tokens** no topo do arquivo, em `:root`, com tema escuro automático (`prefers-color-scheme`) e forçado por `data-theme`: cores (`--bg`, `--surface`, `--ink`, `--muted`, `--line`, `--soft`, `--field`, `--accent`, `--accent-soft`, `--cta`, `--on-cta`, `--good`, `--warn`, `--bad`), vidro (`--glass`, `--glass-line`), sombras (`--shadow-sm`, `--shadow`, `--shadow-lg`), raios (`--r-lg`, `--r-md`, `--r-sm`) e movimento (`--ease`, `--ease-out`, `--fast`, `--med`). `--accent` é para texto/foco; botões principais usam `--cta` (branco sobre `#0071E3`, contraste ≥ 4,5:1 nos dois temas).
+- **Tema**: `components/BotaoTema.tsx` alterna automático → claro → escuro e salva em `localStorage` (`tema`); o script inline em `app/layout.tsx` aplica o tema salvo antes da primeira pintura. Fica na barra da área logada e no canto das telas de acesso.
+- **Tipografia**: fonte do sistema da Apple (SF Pro) quando disponível, senão Inter (Google Fonts em `app/layout.tsx`); `--display` para títulos e números, `--body` para texto. Corpo em 16px.
+- **Ícones**: `lucide-react`, traço 1.9, tamanho `1.1em` via `svg.lucide` no CSS. Ícone ao lado de texto fica decorativo (`aria-hidden`, padrão da biblioteca); botão só com ícone precisa de `aria-label`.
+- **Movimento**: entrada em fade + deslize curto, em cascata, nos blocos de `.wrap` e no cartão de acesso; botões com compressão `scale(.97)` ao clicar; anéis animam o progresso. Tudo desligado com `prefers-reduced-motion`; o vidro vira superfície sólida com `prefers-reduced-transparency`.
+- **Componentes de classe**: `.card`, `.btn` (pílula; `.primary`, `.danger`, `.mini`, `.icone`), `.f` + `.box` (campos), `.chip`/`.pill` (status com `--c`), `.gcard` + `.ringbox` (indicadores), `.stage` (funil), `.action` (plano), `.item` (listas), `.kpis`, `.tabela-admin`, `.auth` (telas de acesso).
 - **Status**: classes `.good`, `.warn`, `.bad`, `.none` definem `--c`, usado por chips, anéis e bordas.
 
 ## Interação
@@ -24,7 +27,8 @@ HTML semântico, navegação por teclado, foco visível (`:focus-visible` com co
 - A tabela do admin rola na horizontal no celular (largura mínima 760px).
 - Estados existentes: vazio no histórico ("Você ainda não salvou nenhuma análise"), plano vazio ("Preencha pelo menos três números…"), erro de carregamento, somente leitura (admin vendo cliente), teste grátis (faixa no topo), acesso vencido (`/assinatura`).
 - Revisões feitas: telas logadas, admin (desktop e 390px) e assinatura conferidas com Supabase simulado em 20/10/2026.
-- Ainda não existe: página pública de vendas, logo/marca, estados de carregamento com skeleton.
+- Redesign no estilo Apple em 21/10/2026: login conferido em 390px e desktop, claro e escuro; telas logadas não conferidas no navegador (exigem sessão do Supabase).
+- Ainda não existe: página pública de vendas, logo/marca definitiva (hoje um ícone de gráfico em quadrado azul), estados de carregamento com skeleton.
 
 ## Ferramentas de design instaladas
 
