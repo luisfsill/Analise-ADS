@@ -1,4 +1,4 @@
-import { Activity, ArrowRight, BarChart3, Check, FileDown, Gauge, History, Keyboard, ListChecks, TrendingUp, Zap } from "lucide-react";
+import { Activity, ArrowRight, BarChart3, Check, FileDown, Gauge, Gift, History, Keyboard, ListChecks, TrendingUp, Zap } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -31,9 +31,11 @@ const PASSOS = [
 ];
 
 const PLANOS = [
-  { nome: "Grátis", preco: "R$ 0", periodo: "por 7 dias", texto: "Teste tudo, sem cartão de crédito.", cta: "Começar teste grátis", destaque: false },
-  { nome: "Pro", preco: "R$ 97", periodo: "por mês", texto: "Para quem analisa campanhas toda semana.", cta: "Começar agora", destaque: true },
+  { nome: "Grátis", preco: "R$ 0", periodo: "por 7 dias", texto: "Teste tudo, sem cartão de crédito.", cta: "Começar teste grátis" },
 ];
+
+/** Posições fixas dos flocos do banner (sem aleatório: renderização igual no servidor e no navegador). */
+const FLOCOS = [6, 14, 22, 31, 39, 47, 55, 63, 71, 79, 87, 94];
 
 const INCLUSO = ["Diagnóstico com nota de 0 a 100", "Plano de ação em checklist", "Relatório em PDF", "Histórico de análises salvo"];
 
@@ -130,14 +132,38 @@ export default function Apresentacao() {
           <h2 id="hPlanos" className="lp-h2">Comece grátis. Assine quando fizer sentido.</h2>
           <div className="lp-planos">
             {PLANOS.map((p) => (
-              <article key={p.nome} className={"lp-tile lp-plano" + (p.destaque ? " lp-plano-pro" : "")}>
+              <article key={p.nome} className="lp-tile lp-plano">
                 <h3>{p.nome}</h3>
                 <p className="lp-preco"><span className="num">{p.preco}</span> {p.periodo}</p>
                 <p>{p.texto}</p>
                 <ul>{INCLUSO.map((item) => <li key={item}><Check />{item}</li>)}</ul>
-                <Link href={ROTA_CADASTRO} scroll={false} className={"btn lp-cta" + (p.destaque ? " primary" : " lp-ghost")}>{p.cta}</Link>
+                <Link href={ROTA_CADASTRO} scroll={false} className="btn lp-cta lp-ghost">{p.cta}</Link>
               </article>
             ))}
+            <aside className="lp-tile lp-plano lp-promo" aria-labelledby="hPromo">
+              <div className="lp-flocos" aria-hidden="true">
+                {FLOCOS.map((x, i) => <span key={x} style={{ left: x + "%", animationDelay: -i * 0.7 + "s", animationDuration: 7 + (i % 4) * 1.5 + "s" }} />)}
+              </div>
+              <span className="lp-promo-selo"><Gift />Tempo limitado</span>
+              <h3 id="hPromo" className="lp-promo-titulo">Promoção de final de ano</h3>
+              <p className="lp-promo-preco">
+                <span>de <s>R$ 98</s> por</span>
+                <b className="num">R$ 44</b><small>por mês</small>
+              </p>
+              <p className="lp-promo-txt">Promoção de final de ano por tempo limitado. Plano Pro com mais da metade de desconto.</p>
+              <Link href={ROTA_CADASTRO} scroll={false} className="btn lp-promo-cta">Garantir meu desconto<ArrowRight /></Link>
+            </aside>
+          <article className="lp-tile lp-plano lp-anual">
+            <span className="lp-promo-selo"><Gift />Tempo limitado</span>
+            <h3>Pro anual</h3>
+            <p className="lp-preco">
+              <span className="lp-preco-de">de <s>R$ 1.176</s> por </span>
+              <span className="num">R$ 528</span> por ano
+            </p>
+            <p>Plano Pro por 12 meses com a promoção de final de ano. Equivale a R$ 44 por mês.</p>
+            <ul>{INCLUSO.map((item) => <li key={item}><Check />{item}</li>)}</ul>
+            <Link href={ROTA_CADASTRO} scroll={false} className="btn lp-promo-cta">Assinar o plano anual<ArrowRight /></Link>
+          </article>
           </div>
           <p className="lp-nota">No fim do teste, assine para continuar. Suas análises continuam guardadas.</p>
         </section>
