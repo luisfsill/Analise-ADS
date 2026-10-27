@@ -137,7 +137,7 @@ export default function Apresentacao() {
                 <p className="lp-preco"><span className="num">{p.preco}</span> {p.periodo}</p>
                 <p>{p.texto}</p>
                 <ul>{INCLUSO.map((item) => <li key={item}><Check />{item}</li>)}</ul>
-                <Link href={ROTA_CADASTRO} scroll={false} className="btn lp-cta lp-ghost">{p.cta}</Link>
+                <Link href={ROTA_CADASTRO} scroll={false} className="btn lp-cta">{p.cta}</Link>
               </article>
             ))}
             <aside className="lp-tile lp-plano lp-promo" aria-labelledby="hPromo">
@@ -145,22 +145,28 @@ export default function Apresentacao() {
                 {FLOCOS.map((x, i) => <span key={x} style={{ left: x + "%", animationDelay: -i * 0.7 + "s", animationDuration: 7 + (i % 4) * 1.5 + "s" }} />)}
               </div>
               <span className="lp-promo-selo"><Gift />Tempo limitado</span>
-              <h3 id="hPromo" className="lp-promo-titulo">Promoção de final de ano</h3>
+              <h3 id="hPromo" className="lp-promo-titulo">Pro</h3>
+              <p className="lp-promo-sub">Promoção de final de ano</p>
               <p className="lp-promo-preco">
                 <span>de <s>R$ 98</s> por</span>
                 <b className="num">R$ 44</b><small>por mês</small>
               </p>
-              <p className="lp-promo-txt">Promoção de final de ano por tempo limitado. Plano Pro com mais da metade de desconto.</p>
+              <p className="lp-promo-txt">Para quem analisa campanhas toda semana. Cobrança mensal.</p>
+              <ul>{INCLUSO.map((item) => <li key={item}><Check />{item}</li>)}</ul>
               <Link href={ROTA_CADASTRO} scroll={false} className="btn lp-promo-cta">Garantir meu desconto<ArrowRight /></Link>
             </aside>
-          <article className="lp-tile lp-plano lp-anual">
+          <article className="lp-tile lp-plano lp-promo lp-anual">
+            <div className="lp-flocos" aria-hidden="true">
+              {FLOCOS.map((x, i) => <span key={x} style={{ left: x + "%", animationDelay: -i * 0.7 + "s", animationDuration: 7 + (i % 4) * 1.5 + "s" }} />)}
+            </div>
             <span className="lp-promo-selo"><Gift />Tempo limitado</span>
-            <h3>Pro anual</h3>
-            <p className="lp-preco">
-              <span className="lp-preco-de">de <s>R$ 1.176</s> por </span>
-              <span className="num">R$ 528</span> por ano
+            <h3 className="lp-promo-titulo">Pro anual</h3>
+            <p className="lp-promo-sub">Promoção de final de ano</p>
+            <p className="lp-promo-preco">
+              <span>de <s>R$ 1.176</s> por</span>
+              <b className="num">R$ 528</b><small>por ano</small>
             </p>
-            <p>Plano Pro por 12 meses com a promoção de final de ano. Equivale a R$ 44 por mês.</p>
+            <p className="lp-promo-txt">Para quem analisa campanhas toda semana. Equivale a R$ 44 por mês.</p>
             <ul>{INCLUSO.map((item) => <li key={item}><Check />{item}</li>)}</ul>
             <Link href={ROTA_CADASTRO} scroll={false} className="btn lp-promo-cta">Assinar o plano anual<ArrowRight /></Link>
           </article>

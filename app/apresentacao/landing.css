@@ -127,7 +127,9 @@
 .lp-promo-selo{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:999px;font-size:.82rem;font-weight:650;letter-spacing:.04em;text-transform:uppercase;color:#3A2400;background:linear-gradient(135deg,#FFE9A8,#FFC94A)}
 .lp-promo-selo .lucide{width:15px;height:15px}
 .lp .lp-promo-titulo{margin:16px 0 0;font-size:1.45rem;font-weight:750;letter-spacing:-0.03em;line-height:1.15}
+.lp .lp-promo-sub{margin:4px 0 0;font-size:.92rem;font-weight:600;color:#FFD778}
 .lp-promo-preco{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px;margin:16px 0 0;font-size:1rem;color:rgba(255,255,255,.85)}
+.lp-promo-preco>span{flex-basis:100%}
 .lp-promo-preco s{text-decoration-thickness:2px;text-decoration-color:rgba(255,233,168,.7)}
 .lp-promo-preco b{font-size:2.6rem;font-weight:800;line-height:1;color:#FFD778;text-shadow:0 0 28px rgba(255,201,74,.5)}
 .lp-promo-preco small{font-size:1rem;color:rgba(255,255,255,.8)}
@@ -135,14 +137,9 @@
 .btn.lp-promo-cta{margin-top:auto;min-height:48px;padding:12px 26px;font-size:1rem;font-weight:650;color:#3A2400;background:linear-gradient(135deg,#FFE9A8,#FFC94A);border-color:transparent}
 .btn.lp-promo-cta:hover{filter:brightness(1.06);transform:translateY(-1px)}
 .lp-plano-fita{display:inline-block;margin-bottom:10px;padding:4px 10px;border-radius:999px;font-size:.74rem;font-weight:700;color:#3A2400;background:linear-gradient(135deg,#FFE9A8,#FFC94A)}
-.lp-promo .lp-promo-cta{margin-top:22px;align-self:stretch}
-.lp-anual{background:radial-gradient(560px 240px at 0% 0%,rgba(255,201,74,.14),transparent 70%),var(--card)}
+.lp-promo .lp-promo-cta{align-self:stretch}
 .lp-anual .btn.lp-promo-cta{margin-top:auto}
-.lp-anual .lp-preco .num{font-size:2.1rem}
 .lp-plano>.lp-promo-selo{align-self:flex-start}
-.lp-anual>.lp-promo-selo{margin-bottom:16px}
-.lp-preco-de{font-size:.95rem}
-.lp-preco-de s{text-decoration-color:var(--muted)}
 @media (prefers-reduced-motion:reduce){.lp-flocos span{animation:none;top:30%}.btn.lp-promo-cta:hover{transform:none}}
 
 /* CTA final */
