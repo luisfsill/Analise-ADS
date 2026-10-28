@@ -3,12 +3,12 @@
  * PREENCHA antes de publicar. Enquanto um campo começar com "[", a página mostra um aviso.
  */
 export const EMPRESA = {
-  nome: "65.273.503 José Rodrigues Vieira Neto",
-  documento: "CNPJ 65.273.503/0001-86",
-  endereco: "Rua Sargento Rogério Antônio Maglia, 50, Residencial Greenville, Ribeirão Preto/SP, CEP 14098-368",
-  emailContato: "netto2rodd@gmail.com",
-  encarregado: "José Rodrigues Vieira Neto",
-  emailEncarregado: "netto2rodd@gmail.com",
+  nome: "Análise ADS",
+  documento: "[CNPJ a informar]",
+  endereco: "[endereço a informar]",
+  emailContato: "suporte@analiseads.com",
+  encarregado: "Análise ADS",
+  emailEncarregado: "suporte@analiseads.com",
   cidadeForo: "Ribeirão Preto/SP",
 };
 
